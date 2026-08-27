@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope 13 Explore 2: Activity - Elements, Compounds, and Mixtures</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#f43f5e',
+                            500: '#e11d48',
+                            600: '#be123c',
+                            700: '#9f1239',
+                            800: '#800000',
+                            900: '#5c0000',
+                            950: '#380000',
+                        },
+                        labGrey: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#09090b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        body {
+            background-color: #fdfbfb;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .colorful-bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff5f5 0%, #f0fdf4 35%, #f0f9ff 70%, #faf5ff 100%);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.55;
+            animation: floatBlob 18s ease-in-out infinite alternate;
+        }
+
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, #f43f5e 0%, #be123c 50%, transparent 80%);
+            animation-duration: 22s;
+        }
+
+        .blob-2 {
+            top: 60%;
+            right: -10%;
+            width: 45vw;
+            height: 45vw;
+            background: radial-gradient(circle, #06b6d4 0%, #0284c7 50%, transparent 80%);
+            animation-duration: 18s;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            bottom: -15%;
+            left: 20%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, #a855f7 0%, #7e22ce 50%, transparent 80%);
+            animation-duration: 25s;
+            animation-delay: -10s;
+        }
+
+        .blob-4 {
+            top: 20%;
+            right: 25%;
+            width: 35vw;
+            height: 35vw;
+            background: radial-gradient(circle, #10b981 0%, #059669 50%, transparent 80%);
+            animation-duration: 20s;
+            animation-delay: -15s;
+        }
+
+        .blob-5 {
+            top: 45%;
+            left: 10%;
+            width: 30vw;
+            height: 30vw;
+            background: radial-gradient(circle, #f59e0b 0%, #d97706 50%, transparent 80%);
+            animation-duration: 16s;
+            animation-delay: -8s;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+            33% { transform: translate(40px, -50px) scale(1.1) rotate(120deg); }
+            66% { transform: translate(-30px, 30px) scale(0.95) rotate(240deg); }
+            100% { transform: translate(20px, -20px) scale(1.05) rotate(360deg); }
+        }
+
+        .particle-bg {
+            background-image: radial-gradient(rgba(100, 116, 139, 0.2) 1.2px, transparent 1.2px);
+            background-size: 28px 28px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        .glass-card-maroon {
+            background: rgba(128, 0, 0, 0.06);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(128, 0, 0, 0.2);
+        }
+
+        .glass-card-light {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid #cbd5e1;
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .pulse-hover:hover {
+            animation: pulse-subtle 1.5s infinite ease-in-out;
+        }
+
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-zinc-900 min-h-screen font-sans particle-bg flex flex-col justify-between no-select">
+
+    <!-- Colorful Background Ambient Mesh Layer -->
+    <div class="colorful-bg-mesh">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+        <div class="blob blob-5"></div>
+    </div>
+
+    <!-- Header / Navigation Bar -->
+    <header class="bg-white/80 border-b border-zinc-200/80 sticky top-0 z-50 px-4 py-3 shadow-sm backdrop-blur-md">
+                    <p class="text-xs text-zinc-500">TN Science Standard 7.PS1.1 • Middle School Edition</p>
+                </div>
+            </div>
+
+            <!-- Global Scoreboard & Level Indicator -->
+            <div class="flex items-center space-x-4 bg-zinc-100 px-4 py-1.5 rounded-full border border-zinc-200 shadow-inner">
+                <div class="flex items-center space-x-1.5">
+                    <i class="fa-solid fa-trophy text-maroon-700 text-sm"></i>
+                    <span class="text-xs text-zinc-500 font-semibold">Score:</span>
+                    <span id="global-score" class="font-bold text-zinc-900 text-sm">0</span>
+                </div>
+                <div class="h-4 w-[1px] bg-zinc-300"></div>
+                <div class="flex items-center space-x-1.5">
+                    <i class="fa-solid fa-layer-group text-zinc-600 text-sm"></i>
+                    <span id="level-indicator" class="text-xs font-semibold text-zinc-700">Discovery Phase</span>
+                </div>
+                <button id="sound-toggle" onclick="toggleSound()" class="text-zinc-500 hover:text-zinc-900 transition ml-2" title="Toggle Sound">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl w-full mx-auto p-4 flex-grow flex flex-col justify-center">
+
+        <!-- SCREEN 0: INTRO & PRIMER CARD -->
+        <section id="screen-intro" class="space-y-6 my-auto">
+            <div class="text-center space-y-3">
+                <span class="bg-maroon-100 text-maroon-900 border border-maroon-300 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm">
+                    TN Science Standard 7.PS1.1 • 3D Discovery Lab
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-zinc-900 tracking-tight">
+                    Scope 13 Explore 2: Activity - Elements, Compounds, and Mixtures
+                </h2>
+                <p class="text-maroon-800 text-xs md:text-sm font-extrabold tracking-widest uppercase">Particle-Level Phenomenon</p>
+                <p class="text-zinc-700 max-w-2xl mx-auto text-sm md:text-base leading-relaxed font-medium">
+                    Welcome, Scientist! Examine the particle models in the 3 research chambers below. 
+                    <strong class="text-zinc-900 underline decoration-maroon-600 decoration-2">Observe patterns</strong> in how atoms are arranged, connected, or mixed to discover how matter is classified!
+                </p>
+            </div>
+
+            <!-- Discovery Observation Chambers -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Chamber A -->
+                <div class="glass-card p-5 rounded-2xl border-t-4 border-t-maroon-800 hover:border-maroon-600 transition shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-bold text-zinc-900">Particle Chamber A</h3>
+                            <span class="text-xs bg-maroon-100 text-maroon-900 px-2 py-0.5 rounded border border-maroon-300 font-mono font-semibold">Observation 1</span>
+                        </div>
+                        <!-- Particle Visualizer -->
+                        <div class="bg-slate-100 h-36 rounded-xl border border-zinc-200 flex items-center justify-center relative overflow-hidden mb-3 p-2 shadow-inner">
+                            <svg class="w-full h-full" viewBox="0 0 200 100">
+                                <!-- Pure identical single atoms -->
+                                <circle cx="40" cy="50" r="14" fill="#800000" stroke="#be123c" stroke-width="1.5" />
+                                <circle cx="95" cy="35" r="14" fill="#800000" stroke="#be123c" stroke-width="1.5" />
+                                <circle cx="155" cy="65" r="14" fill="#800000" stroke="#be123c" stroke-width="1.5" />
+                                <circle cx="110" cy="75" r="14" fill="#800000" stroke="#be123c" stroke-width="1.5" />
+                            </svg>
+                        </div>
+                        <div class="space-y-2 text-xs text-zinc-700">
+                            <p class="font-bold text-maroon-800"><i class="fa-solid fa-magnifying-glass mr-1"></i> What do you observe?</p>
+                            <p class="bg-white p-2.5 rounded-lg border border-zinc-200 text-zinc-800 leading-relaxed font-medium shadow-sm">
+                                All particles in this sample are identical in color and size. None of the particles are connected to each other.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-zinc-200">
+                        <span class="text-[11px] text-zinc-500 italic font-medium"><i class="fa-solid fa-lightbulb text-maroon-700 mr-1"></i> Notice: Only one type of building block is present.</span>
+                    </div>
+                </div>
+
+                <!-- Chamber B -->
+                <div class="glass-card p-5 rounded-2xl border-t-4 border-t-zinc-600 hover:border-zinc-800 transition shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-bold text-zinc-900">Particle Chamber B</h3>
+                            <span class="text-xs bg-zinc-200 text-zinc-800 px-2 py-0.5 rounded border border-zinc-300 font-mono font-semibold">Observation 2</span>
+                        </div>
+                        <!-- Particle Visualizer -->
+                        <div class="bg-slate-100 h-36 rounded-xl border border-zinc-200 flex items-center justify-center relative overflow-hidden mb-3 p-2 shadow-inner">
+                            <svg class="w-full h-full" viewBox="0 0 200 100">
+                                <!-- Chemically bonded different/same atoms -->
+                                <g transform="translate(45, 45)">
+                                    <circle cx="0" cy="0" r="12" fill="#800000" stroke="#be123c" stroke-width="1.5" />
+                                    <circle cx="-12" cy="10" r="8" fill="#475569" stroke="#334155" stroke-width="1" />
+                                    <circle cx="12" cy="10" r="8" fill="#475569" stroke="#334155" stroke-width="1" />
+                                </g>
+                                <g transform="translate(145, 55)">
+                                    <circle cx="0" cy="0" r="12" fill="#800000" stroke="#be123c" stroke-width="1.5" />
+                                    <circle cx="-12" cy="10" r="8" fill="#475569" stroke="#334155" stroke-width="1" />
+                                    <circle cx="12" cy="10" r="8" fill="#475569" stroke="#334155" stroke-width="1" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="space-y-2 text-xs text-zinc-700">
+                            <p class="font-bold text-zinc-800"><i class="fa-solid fa-magnifying-glass mr-1"></i> What do you observe?</p>
+                            <p class="bg-white p-2.5 rounded-lg border border-zinc-200 text-zinc-800 leading-relaxed font-medium shadow-sm">
+                                Different types of atoms are linked (bonded) together into identical cluster units throughout the container.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-zinc-200">
+                        <span class="text-[11px] text-zinc-500 italic font-medium"><i class="fa-solid fa-lightbulb text-maroon-700 mr-1"></i> Notice: The atoms are chemically connected together.</span>
+                    </div>
+                </div>
+
+                <!-- Chamber C -->
+                <div class="glass-card p-5 rounded-2xl border-t-4 border-t-zinc-800 hover:border-black transition shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-bold text-zinc-900">Particle Chamber C</h3>
+                            <span class="text-xs bg-zinc-200 text-zinc-800 px-2 py-0.5 rounded border border-zinc-300 font-mono font-semibold">Observation 3</span>
+                        </div>
+                        <!-- Particle Visualizer -->
+                        <div class="bg-slate-100 h-36 rounded-xl border border-zinc-200 flex items-center justify-center relative overflow-hidden mb-3 p-2 shadow-inner">
+                            <svg class="w-full h-full" viewBox="0 0 200 100">
+                                <!-- Unbonded mixed substances floating -->
+                                <circle cx="35" cy="35" r="10" fill="#800000" stroke="#be123c" stroke-width="1" />
+                                <circle cx="165" cy="70" r="10" fill="#64748b" stroke="#334155" stroke-width="1" />
+                                <g transform="translate(100, 45)">
+                                    <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+                                    <circle cx="-10" cy="8" r="6" fill="#cbd5e1" stroke="#64748b" stroke-width="1" />
+                                    <circle cx="10" cy="8" r="6" fill="#cbd5e1" stroke="#64748b" stroke-width="1" />
+                                </g>
+                                <circle cx="150" cy="25" r="7" fill="#be123c" stroke="#fda4af" stroke-width="1" />
+                                <circle cx="55" cy="75" r="8" fill="#64748b" stroke="#334155" stroke-width="1" />
+                            </svg>
+                        </div>
+                        <div class="space-y-2 text-xs text-zinc-700">
+                            <p class="font-bold text-zinc-800"><i class="fa-solid fa-magnifying-glass mr-1"></i> What do you observe?</p>
+                            <p class="bg-white p-2.5 rounded-lg border border-zinc-200 text-zinc-800 leading-relaxed font-medium shadow-sm">
+                                Multiple different individual atoms and clusters are floating together, physically blended without connections between them.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-zinc-200">
+                        <span class="text-[11px] text-zinc-500 italic font-medium"><i class="fa-solid fa-lightbulb text-maroon-700 mr-1"></i> Notice: Combination of different unbonded structures.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Mission Button -->
+            <div class="text-center pt-4">
+                <button onclick="startLevel(1)" class="bg-gradient-to-r from-maroon-900 via-maroon-800 to-zinc-900 hover:from-maroon-800 hover:to-zinc-800 text-white font-extrabold text-lg px-8 py-4 rounded-2xl shadow-lg border border-maroon-700/60 transition transform active:scale-95 flex items-center justify-center space-x-3 mx-auto">
+                    <span>Begin Discovery Investigation (5 Levels)</span>
+                    <i class="fa-solid fa-flask-vial text-maroon-200"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- LEVEL 1: DEFINITIONS VAULT -->
+        <section id="screen-level-1" class="hidden space-y-6 my-auto">
+            <div class="flex justify-between items-center bg-white/90 p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                <div>
+                    <span class="text-xs text-maroon-800 font-bold tracking-wider uppercase">Level 1 of 5</span>
+                    <h2 class="text-2xl font-extrabold text-zinc-900">The Definition Vault</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-zinc-500 font-semibold">Question</span>
+                    <p class="text-lg font-bold text-zinc-900"><span id="l1-q-num">1</span> / <span id="l1-q-total">5</span></p>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 md:p-8 rounded-2xl shadow-lg max-w-3xl mx-auto border border-zinc-200 space-y-6">
+                <div class="space-y-2">
+                    <span id="l1-category-badge" class="bg-maroon-100 text-maroon-900 border border-maroon-300 text-xs px-3 py-1 rounded-full font-semibold">Concept Challenge</span>
+                    <h3 id="l1-question-text" class="text-lg md:text-xl font-bold text-zinc-900 leading-relaxed">
+                        Loading question...
+                    </h3>
+                </div>
+
+                <div id="l1-options-container" class="grid grid-cols-1 gap-3">
+                    <!-- Dynamic option buttons inserted here -->
+                </div>
+
+                <!-- Feedback Banner -->
+                <div id="l1-feedback" class="hidden p-4 rounded-xl text-sm font-medium transition flex items-center justify-between">
+                    <div id="l1-feedback-text" class="flex items-center space-x-2"></div>
+                    <button id="l1-next-btn" onclick="nextL1Question()" class="bg-maroon-800 hover:bg-maroon-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition border border-maroon-600 shadow-sm">
+                        Next Question <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEVEL 2: EXAMPLES MATTER SORTER -->
+        <section id="screen-level-2" class="hidden space-y-6 my-auto">
+            <div class="flex justify-between items-center bg-white/90 p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                <div>
+                    <span class="text-xs text-maroon-800 font-bold tracking-wider uppercase">Level 2 of 5</span>
+                    <h2 class="text-2xl font-extrabold text-zinc-900">The Matter Classification Sorter</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-zinc-500 font-semibold">Items Sorted</span>
+                    <p class="text-lg font-bold text-zinc-900"><span id="l2-count">0</span> / <span id="l2-total">14</span></p>
+                </div>
+            </div>
+
+            <p class="text-center text-sm text-zinc-700 font-medium">Select an item card and assign it to its correct category bucket below!</p>
+
+            <!-- Active Target Card -->
+            <div id="l2-active-card-container" class="max-w-md mx-auto">
+                <!-- Dynamically rendered card -->
+            </div>
+
+            <!-- Buckets -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="sortItemL2('Element')" class="glass-card hover:bg-maroon-50/80 p-5 rounded-2xl border border-maroon-300 hover:border-maroon-600 text-center space-y-2 group transition transform active:scale-95 shadow-md">
+                    <div class="bg-maroon-100 text-maroon-900 w-12 h-12 rounded-xl flex items-center justify-center mx-auto border border-maroon-300 group-hover:scale-110 transition shadow-sm">
+                        <i class="fa-solid fa-atom text-xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-zinc-900 text-base">ELEMENT</h4>
+                </button>
+
+                <button onclick="sortItemL2('Molecule')" class="glass-card hover:bg-zinc-100 p-5 rounded-2xl border border-zinc-300 hover:border-zinc-500 text-center space-y-2 group transition transform active:scale-95 shadow-md">
+                    <div class="bg-zinc-200 text-zinc-800 w-12 h-12 rounded-xl flex items-center justify-center mx-auto border border-zinc-300 group-hover:scale-110 transition shadow-sm">
+                        <i class="fa-solid fa-dna text-xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-zinc-900 text-base">MOLECULE / COMPOUND</h4>
+                </button>
+
+                <button onclick="sortItemL2('Mixture')" class="glass-card hover:bg-stone-100 p-5 rounded-2xl border border-stone-300 hover:border-stone-500 text-center space-y-2 group transition transform active:scale-95 shadow-md">
+                    <div class="bg-stone-200 text-stone-800 w-12 h-12 rounded-xl flex items-center justify-center mx-auto border border-stone-300 group-hover:scale-110 transition shadow-sm">
+                        <i class="fa-solid fa-blender text-xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-zinc-900 text-base">MIXTURE</h4>
+                </button>
+            </div>
+
+            <!-- Sorting Feedback Alert -->
+            <div id="l2-feedback" class="hidden p-4 rounded-xl text-center font-medium text-sm transition shadow-sm"></div>
+        </section>
+
+        <!-- LEVEL 3: PROPERTIES IDENTIFIER -->
+        <section id="screen-level-3" class="hidden space-y-6 my-auto">
+            <div class="flex justify-between items-center bg-white/90 p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                <div>
+                    <span class="text-xs text-maroon-800 font-bold tracking-wider uppercase">Level 3 of 5</span>
+                    <h2 class="text-2xl font-extrabold text-zinc-900">Property Inspector</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-zinc-500 font-semibold">Case</span>
+                    <p class="text-lg font-bold text-zinc-900"><span id="l3-q-num">1</span> / <span id="l3-q-total">7</span></p>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 md:p-8 rounded-2xl shadow-lg max-w-3xl mx-auto border border-zinc-200 space-y-6">
+                <div class="bg-slate-100 p-4 rounded-xl border border-zinc-200 shadow-inner">
+                    <span class="text-xs text-maroon-800 uppercase tracking-widest font-extrabold">Mystery Substance Profile</span>
+                    <h3 id="l3-substance-title" class="text-xl font-black text-zinc-900 mt-1">
+                        Substance X
+                    </h3>
+                    <p id="l3-substance-desc" class="text-zinc-700 text-sm mt-2 leading-relaxed font-medium">
+                        Loading substance description...
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-zinc-800">
+                        Based on these properties, classify this substance and select its key characteristic:
+                    </label>
+                    <div id="l3-options" class="grid grid-cols-1 gap-3">
+                        <!-- Dynamic choices -->
+                    </div>
+                </div>
+
+                <div id="l3-feedback" class="hidden p-4 rounded-xl text-sm font-medium transition flex items-center justify-between">
+                    <div id="l3-feedback-text"></div>
+                    <button id="l3-next-btn" onclick="nextL3Question()" class="bg-maroon-800 hover:bg-maroon-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition border border-maroon-600 shadow-sm">
+                        Next Case <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEVEL 4: PERIODIC TABLE INSPECTOR -->
+        <section id="screen-level-4" class="hidden space-y-6 my-auto">
+            <div class="flex justify-between items-center bg-white/90 p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                <div>
+                    <span class="text-xs text-maroon-800 font-bold tracking-wider uppercase">Level 4 of 5</span>
+                    <h2 class="text-2xl font-extrabold text-zinc-900">Periodic Table Challenge</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-zinc-500 font-semibold">Target</span>
+                    <p class="text-lg font-bold text-zinc-900"><span id="l4-q-num">1</span> / <span id="l4-q-total">10</span></p>
+                </div>
+            </div>
+
+            <!-- Concept Header Note -->
+            <div class="bg-maroon-50 border border-maroon-200 p-3.5 rounded-xl text-xs text-maroon-950 flex items-center space-x-3 shadow-sm">
+                <i class="fa-solid fa-circle-info text-maroon-700 text-lg flex-shrink-0"></i>
+                <p><strong>Rule of Science:</strong> The Periodic Table displays <u>ONLY</u> pure Elements (each with its own atomic symbol). Molecules, compounds, and mixtures do NOT have single element tiles!</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-2xl shadow-lg max-w-3xl mx-auto space-y-6 border border-zinc-200">
+                <div class="text-center space-y-2">
+                    <span class="text-xs text-zinc-500 uppercase tracking-wider font-bold">Is this item found directly on the Periodic Table?</span>
+                    <h3 id="l4-item-name" class="text-3xl font-black text-zinc-900">Item Name</h3>
+                    <p id="l4-item-formula" class="text-sm text-maroon-800 font-mono font-bold">Formula/Symbol</p>
+                </div>
+
+                <!-- Choice Buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto">
+                    <button onclick="answerL4(true)" class="p-5 glass-card hover:bg-maroon-50 border border-maroon-300 hover:border-maroon-600 rounded-2xl text-center space-y-1 transition transform active:scale-95 shadow-md">
+                        <i class="fa-solid fa-circle-check text-maroon-700 text-2xl"></i>
+                        <h4 class="font-extrabold text-zinc-900 text-base">YES</h4>
+                        <p class="text-xs text-zinc-600 font-medium">It is an Element and has an atomic tile!</p>
+                    </button>
+
+                    <button onclick="answerL4(false)" class="p-5 glass-card hover:bg-zinc-100 border border-zinc-300 hover:border-zinc-500 rounded-2xl text-center space-y-1 transition transform active:scale-95 shadow-md">
+                        <i class="fa-solid fa-circle-xmark text-zinc-600 text-2xl"></i>
+                        <h4 class="font-extrabold text-zinc-900 text-base">NO</h4>
+                        <p class="text-xs text-zinc-600 font-medium">It is a Molecule, Compound, or Mixture!</p>
+                    </button>
+                </div>
+
+                <div id="l4-feedback" class="hidden p-4 rounded-xl text-sm font-medium transition flex items-center justify-between">
+                    <div id="l4-feedback-text"></div>
+                    <button id="l4-next-btn" onclick="nextL4Question()" class="bg-maroon-800 hover:bg-maroon-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition border border-maroon-600 shadow-sm">
+                        Next Challenge <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEVEL 5: SEPARATION STATION LAB -->
+        <section id="screen-level-5" class="hidden space-y-6 my-auto">
+            <div class="flex justify-between items-center bg-white/90 p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                <div>
+                    <span class="text-xs text-maroon-800 font-bold tracking-wider uppercase">Level 5 of 5 (Final)</span>
+                    <h2 class="text-2xl font-extrabold text-zinc-900">Separation Station Lab</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-zinc-500 font-semibold">Sample</span>
+                    <p class="text-lg font-bold text-zinc-900"><span id="l5-q-num">1</span> / <span id="l5-q-total">8</span></p>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 md:p-8 rounded-2xl shadow-lg max-w-3xl mx-auto space-y-6 border border-zinc-200">
+                <div class="bg-slate-100 p-5 rounded-2xl border border-zinc-200 flex items-start space-x-4 shadow-inner">
+                    <div class="bg-maroon-100 border border-maroon-300 p-3 rounded-xl text-maroon-900 text-2xl shadow-sm">
+                        <i class="fa-solid fa-flask text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-maroon-800 font-extrabold uppercase tracking-wider">Lab Sample Challenge</span>
+                        <h3 id="l5-sample-name" class="text-xl font-extrabold text-zinc-900">Sample Name</h3>
+                        <p id="l5-sample-desc" class="text-xs text-zinc-700 mt-1 leading-relaxed font-medium">Description of sample...</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-zinc-800">
+                        How can this sample be separated into its simpler component substances?
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button onclick="answerL5('physical')" class="p-4 glass-card hover:bg-zinc-100 border border-zinc-300 hover:border-zinc-500 rounded-xl text-left space-y-1 transition transform active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-filter text-zinc-700 text-lg mb-1"></i>
+                            <h4 class="font-bold text-zinc-900 text-sm">Physical Means</h4>
+                            <p class="text-xs text-zinc-600">Filtration, evaporation, magnets, distillation.</p>
+                        </button>
+
+                        <button onclick="answerL5('chemical')" class="p-4 glass-card hover:bg-maroon-50 border border-maroon-300 hover:border-maroon-600 rounded-xl text-left space-y-1 transition transform active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-bolt text-maroon-800 text-lg mb-1"></i>
+                            <h4 class="font-bold text-zinc-900 text-sm">Chemical Means</h4>
+                            <p class="text-xs text-zinc-600">Electrolysis, chemical reaction, breaking bonds.</p>
+                        </button>
+
+                        <button onclick="answerL5('neither')" class="p-4 glass-card hover:bg-stone-100 border border-stone-300 hover:border-stone-500 rounded-xl text-left space-y-1 transition transform active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-ban text-stone-600 text-lg mb-1"></i>
+                            <h4 class="font-bold text-zinc-900 text-sm">Cannot Be Separated</h4>
+                            <p class="text-xs text-zinc-600">Cannot be broken down into simpler substances by ordinary means.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="l5-feedback" class="hidden p-4 rounded-xl text-sm font-medium transition flex items-center justify-between">
+                    <div id="l5-feedback-text"></div>
+                    <button id="l5-next-btn" onclick="nextL5Question()" class="bg-maroon-800 hover:bg-maroon-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition border border-maroon-600 shadow-sm">
+                        Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL SCORE / CERTIFICATE SCREEN -->
+        <section id="screen-results" class="hidden space-y-6 my-auto text-center">
+            <div id="certificate-card" class="glass-card-light text-zinc-900 p-8 md:p-10 rounded-3xl max-w-2xl mx-auto shadow-2xl border-4 border-maroon-800 relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-maroon-800/10 rounded-full blur-xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-zinc-900/10 rounded-full blur-xl"></div>
+
+                <div class="space-y-4 relative z-10">
+                    <div class="inline-block bg-maroon-100 text-maroon-900 text-xs px-3.5 py-1 rounded-full font-extrabold uppercase tracking-widest border border-maroon-300">
+                        Official TN Science Achievement
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-zinc-900 tracking-tight">Junior Chemist Certificate</h2>
+                    <p class="text-zinc-600 text-sm font-medium">This certifies that the student has demonstrated mastery of</p>
+                    <p class="text-lg font-black text-maroon-900 uppercase tracking-wide">Elements, Compounds, and Mixtures</p>
+
+                    <div class="my-6 py-4 border-y border-zinc-300 grid grid-cols-2 gap-4">
+                        <div>
+                            <span class="text-xs text-zinc-500 font-bold block">TOTAL SCORE</span>
+                            <span id="final-score" class="text-3xl font-black text-maroon-800">0</span>
+                            <span class="text-xs text-zinc-500 font-bold">/ <span id="max-score-display">220</span> PTS</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-zinc-500 font-bold block">LAB MASTERY LEVEL</span>
+                            <span id="final-rating" class="text-lg font-black text-zinc-900">Master Chemist</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-zinc-500 italic">Aligned with Tennessee Academic Standard MS-PS1-1 / 7.PS1.1</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 pt-2">
+                <button onclick="location.reload()" class="bg-gradient-to-r from-maroon-900 via-maroon-800 to-zinc-900 hover:from-maroon-800 hover:to-zinc-800 text-white font-extrabold px-6 py-3.5 rounded-xl shadow-lg border border-maroon-700/60 transition transform active:scale-95 flex items-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Restart Lab</span>
+                </button>
+                <button onclick="window.print()" class="bg-zinc-200 hover:bg-zinc-300 text-zinc-900 font-bold px-6 py-3.5 rounded-xl border border-zinc-300 transition flex items-center space-x-2 shadow-sm">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print Certificate</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-zinc-200 py-3 text-center text-xs text-zinc-500 font-medium">
+        <p>TN Grade 7 Science Interactive Learning • Scope 13 Explore 2: Activity - Elements, Compounds, and Mixtures</p>
+    </footer>
+
+    <!-- JavaScript Game Logic -->
+    <script>
+        // Global Game State
+        let gameState = {
+            score: 0,
+            soundEnabled: true,
+            currentLevel: 0,
+            l1Index: 0,
+            l2Index: 0,
+            l3Index: 0,
+            l4Index: 0,
+            l5Index: 0
+        };
+
+        // Web Audio API Sound Synthesizer (Zero external audio dependency)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(130, now + 0.25);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'win') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554.37, now + 0.1);
+                    osc.frequency.setValueAtTime(659.25, now + 0.2);
+                    osc.frequency.setValueAtTime(880, now + 0.3);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio not supported or permitted without gesture.");
+            }
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (gameState.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-xs';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-xs text-zinc-500';
+            }
+        }
+
+        // LEVEL 1 DATA: DEFINITIONS (Shuffled order and option placements)
+        const level1Data = [
+            {
+                q: "Which term describes two or more atoms that are CHEMICALLY BONDED together?",
+                options: ["Mixture", "Element", "Molecule", "Alloy"],
+                correct: 2,
+                explanation: "A Molecule is formed when two or more atoms join together chemically."
+            },
+            {
+                q: "What is a pure substance that is made up of only ONE single type of atom?",
+                options: ["Mixture", "Solution", "Molecule", "Element"],
+                correct: 3,
+                explanation: "An Element consists entirely of one kind of atom and cannot be broken down simpler by ordinary chemical means."
+            },
+            {
+                q: "Which of the following describes a key difference between a Compound and a Mixture?",
+                options: [
+                    "Compounds are physically combined; Mixtures are chemically bonded.",
+                    "Mixtures are listed on the Periodic Table; Compounds are not.",
+                    "Compounds are joined by chemical bonds; Mixtures are physically combined.",
+                    "Elements and Mixtures are always pure substances."
+                ],
+                correct: 2,
+                explanation: "Compounds feature atoms joined by chemical bonds, whereas mixtures are physically blended."
+            },
+            {
+                q: "When two or more substances are PHYSICALLY combined (not chemically bonded), it forms a:",
+                options: ["Mixture", "Compound", "Element", "Pure Substance"],
+                correct: 0,
+                explanation: "Mixtures are physical combinations. Because they aren't chemically bonded, they keep their individual properties."
+            },
+            {
+                q: "Water ($H_2O$) contains Hydrogen and Oxygen atoms chemically combined together. Water is a:",
+                options: ["Heterogeneous Mixture", "Atom", "Molecule/Compound", "Element"],
+                correct: 2,
+                explanation: "Water is a Molecule/Compound because Hydrogen and Oxygen atoms are chemically bonded together."
+            }
+        ];
+
+        // LEVEL 2 DATA: ITEM SORTING (Unpredictable sequence of item types)
+        const level2Data = [
+            { name: "Carbon Dioxide", formula: "CO₂", type: "Molecule", desc: "Carbon & Oxygen chemically bonded", icon: "fa-cloud" },
+            { name: "Iron Nail", formula: "Fe", type: "Element", desc: "Pure iron atoms", icon: "fa-wrench" },
+            { name: "Salt Water", formula: "NaCl + H₂O", type: "Mixture", desc: "Salt dissolved physically in water", icon: "fa-water" },
+            { name: "Baking Soda", formula: "NaHCO₃", type: "Molecule", desc: "Sodium, Hydrogen, Carbon, & Oxygen chemically bonded", icon: "fa-box-archive" },
+            { name: "Pure Water", formula: "H₂O", type: "Molecule", desc: "Hydrogen & Oxygen chemically bonded", icon: "fa-glass-water" },
+            { name: "Gold Bar (Au)", formula: "Au", type: "Element", desc: "100% pure gold atoms", icon: "fa-ring" },
+            { name: "Air We Breathe", formula: "N₂ + O₂ + Ar + CO₂", type: "Mixture", desc: "Physical blend of multiple gases", icon: "fa-smog" },
+            { name: "Aluminum Foil", formula: "Al", type: "Element", desc: "Pure aluminum atoms", icon: "fa-sheet-plastic" },
+            { name: "Stainless Steel", formula: "Fe + Cr + Ni", type: "Mixture", desc: "Physical blend of iron, chromium, and nickel metals", icon: "fa-shield-halved" },
+            { name: "Neon Gas", formula: "Ne", type: "Element", desc: "Pure unbonded neon gas atoms", icon: "fa-lightbulb" },
+            { name: "Trail Mix", formula: "Nuts + Raisins", type: "Mixture", desc: "Physical mixture of snacks", icon: "fa-bowl-rice" },
+            { name: "Copper Wire", formula: "Cu", type: "Element", desc: "Pure copper atoms", icon: "fa-bolt" },
+            { name: "Methane Gas", formula: "CH₄", type: "Molecule", desc: "Carbon & Hydrogen chemically bonded", icon: "fa-fire-flame-simple" },
+            { name: "Lemonade", formula: "Water + Sugar + Juice", type: "Mixture", desc: "Physical blend of beverage ingredients", icon: "fa-lemon" }
+        ];
+
+        // LEVEL 3 DATA: PROPERTIES MATRIX
+        const level3Data = [
+            {
+                title: "Substance Alpha: Helium Gas",
+                desc: "Filling a balloon, this gas consists of single, unbonded atoms that cannot be broken down into simpler substances.",
+                options: [
+                    { text: "Mixture: Can be separated physically", correct: false },
+                    { text: "Element: Pure substance of only 1 atom type", correct: true },
+                    { text: "Compound: Chemically combined gas", correct: false }
+                ],
+                explanation: "Helium is an Element (He). It cannot be broken down further."
+            },
+            {
+                title: "Substance Beta: Table Salt (NaCl)",
+                desc: "It is made of Sodium and Chlorine atoms chemically bonded together. It can only be separated into Sodium metal and Chlorine gas by electrolysis.",
+                options: [
+                    { text: "Mixture: Can be separated by filter paper", correct: false },
+                    { text: "Element: Appears as a single tile on Periodic Table", correct: false },
+                    { text: "Molecule/Compound: Made of atoms joined by chemical bonds", correct: true }
+                ],
+                explanation: "Table salt is a Compound because Sodium and Chlorine are joined together by chemical bonds."
+            },
+            {
+                title: "Substance Gamma: Brass Metal",
+                desc: "Made by melting Copper and Zinc together. The amounts of Copper and Zinc can be varied to make softer or harder brass.",
+                options: [
+                    { text: "Mixture (Alloy): Blend of metals that can vary in amounts", correct: true },
+                    { text: "Compound: Chemically bonded substance", correct: false },
+                    { text: "Element: Found on the Periodic Table under 'Brass'", correct: false }
+                ],
+                explanation: "Brass is an alloy, which is a physical Mixture of metals with flexible amounts of each metal!"
+            },
+            {
+                title: "Substance Delta: Salad Dressing",
+                desc: "Contains oil, vinegar, and herbs. If left standing, oil and vinegar separate into layers. The ingredients retain their individual properties.",
+                options: [
+                    { text: "Element: Made of identical atoms", correct: false },
+                    { text: "Mixture: Physically blended with separate ingredient properties", correct: true },
+                    { text: "Molecule: Chemically bonded with a set structure", correct: false }
+                ],
+                explanation: "Salad dressing is a Mixture because the ingredients retain their properties and are physically blended."
+            },
+            {
+                title: "Substance Epsilon: Iron Rust (Fe₂O₃)",
+                desc: "A reddish flake that forms when iron metal chemically reacts with oxygen gas in moisture. Its properties are completely different from shiny iron metal.",
+                options: [
+                    { text: "Molecule/Compound: Chemically bonded atoms with new properties", correct: true },
+                    { text: "Mixture: Iron and oxygen physically mixed together", correct: false },
+                    { text: "Element: Listed on the Periodic Table", correct: false }
+                ],
+                explanation: "Rust is a Compound (Fe₂O₃) formed when iron and oxygen undergo a chemical bond formation."
+            },
+            {
+                title: "Substance Zeta: Silicon Wafer (Si)",
+                desc: "A shiny gray slice used in computer chips, made entirely of a single kind of atom with atomic number 14.",
+                options: [
+                    { text: "Molecule: Multiple atoms chemically connected", correct: false },
+                    { text: "Element: Pure substance containing only one kind of atom", correct: true },
+                    { text: "Mixture: Physical blend of silicon and plastic", correct: false }
+                ],
+                explanation: "Silicon (Si) is an Element! It consists entirely of Silicon atoms."
+            },
+            {
+                title: "Substance Eta: Granite Rock",
+                desc: "A countertop material where you can visibly distinguish pink feldspar, clear quartz, and black mica specks embedded together.",
+                options: [
+                    { text: "Compound: Minerals chemically welded into one new substance", correct: false },
+                    { text: "Element: A single pure mineral tile", correct: false },
+                    { text: "Mixture: Heterogeneous physical collection of different minerals", correct: true }
+                ],
+                explanation: "Granite is a heterogeneous Mixture because individual mineral components remain distinct and physically combined."
+            }
+        ];
+
+        // LEVEL 4 DATA: PERIODIC TABLE INSPECTOR
+        const level4Data = [
+            { name: "Water", formula: "H₂O", onTable: false, reason: "Water is a Molecule (Compound) made of Hydrogen and Oxygen. Only individual elements get tiles!" },
+            { name: "Gold", formula: "Au", onTable: true, reason: "Gold (Au) is Element #79 on the Periodic Table!" },
+            { name: "Air", formula: "N₂ + O₂ + CO₂", onTable: false, reason: "Air is a Mixture of gases, not a single element!" },
+            { name: "Iron", formula: "Fe", onTable: true, reason: "Iron (Fe) is Element #26 on the Periodic Table!" },
+            { name: "Carbon", formula: "C", onTable: true, reason: "Carbon (C) is Element #6 on the Periodic Table!" },
+            { name: "Table Sugar", formula: "C₁₂H₂₂O₁₁", onTable: false, reason: "Sugar is a Compound (Molecule) made of Carbon, Hydrogen, and Oxygen atoms!" },
+            { name: "Zinc", formula: "Zn", onTable: true, reason: "Zinc (Zn) is Element #30 on the Periodic Table!" },
+            { name: "Bronze Metal", formula: "Cu + Sn", onTable: false, reason: "Bronze is a Mixture (alloy) of Copper and Tin metals!" },
+            { name: "Silver", formula: "Ag", onTable: true, reason: "Silver (Ag) is Element #47 on the Periodic Table!" },
+            { name: "Carbon Dioxide", formula: "CO₂", onTable: false, reason: "Carbon Dioxide is a Compound made of Carbon and Oxygen chemically bonded!" }
+        ];
+
+        // LEVEL 5 DATA: SEPARATION STATION LAB
+        const level5Data = [
+            {
+                name: "Pure Copper Wire (Cu)",
+                desc: "A spool of pure copper metal.",
+                correct: "neither",
+                explanation: "Copper is an ELEMENT! It CANNOT be broken down into simpler substances by ordinary chemical or physical means."
+            },
+            {
+                name: "Salt Water Solution",
+                desc: "Salt fully dissolved in warm water.",
+                correct: "physical",
+                explanation: "Can be separated PHYSICALLY by boiling/evaporating the water, leaving salt crystals behind!"
+            },
+            {
+                name: "Pure Water Molecule (H₂O)",
+                desc: "A beaker of pure distilled water.",
+                correct: "chemical",
+                explanation: "Water molecules can ONLY be broken into Hydrogen and Oxygen gases through electrolysis (CHEMICAL means)."
+            },
+            {
+                name: "Sand and Iron Filings",
+                desc: "A bowl containing dark iron specks mixed into dry yellow sand.",
+                correct: "physical",
+                explanation: "Can be separated PHYSICALLY using a magnet to pull out the magnetic iron filings!"
+            },
+            {
+                name: "Pure Helium Gas (He)",
+                desc: "A canister of compressed helium gas.",
+                correct: "neither",
+                explanation: "Helium is an ELEMENT! It cannot be separated or broken down into simpler substances."
+            },
+            {
+                name: "Sugar Water Solution",
+                desc: "Clear liquid with sugar dissolved in water.",
+                correct: "physical",
+                explanation: "Can be separated PHYSICALLY by evaporating the water to reclaim the solid sugar crystals."
+            },
+            {
+                name: "Hydrogen Peroxide (H₂O₂)",
+                desc: "A brown bottle containing pure hydrogen peroxide liquid.",
+                correct: "chemical",
+                explanation: "Requires a CHEMICAL reaction (decomposition) to break the bonds separating it into water and oxygen gas!"
+            },
+            {
+                name: "Gravel and Wood Chips",
+                desc: "A dry bucket containing small pebbles and floated pine wood bark.",
+                correct: "physical",
+                explanation: "Can be separated PHYSICALLY by adding water so wood chips float while heavy pebbles sink (density physical separation)."
+            }
+        ];
+
+        function updateScore(points) {
+            gameState.score += points;
+            document.getElementById('global-score').innerText = gameState.score;
+        }
+
+        function showScreen(screenId) {
+            const screens = ['screen-intro', 'screen-level-1', 'screen-level-2', 'screen-level-3', 'screen-level-4', 'screen-level-5', 'screen-results'];
+            screens.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function startLevel(levelNum) {
+            gameState.currentLevel = levelNum;
+            const levelNames = ["Discovery Phase", "Level 1: Pattern Identification", "Level 2: Sorter", "Level 3: Properties", "Level 4: Periodic Table", "Level 5: Separation"];
+            document.getElementById('level-indicator').innerText = levelNames[levelNum];
+
+            if (levelNum === 1) {
+                gameState.l1Index = 0;
+                renderL1Question();
+                showScreen('screen-level-1');
+            } else if (levelNum === 2) {
+                gameState.l2Index = 0;
+                renderL2Card();
+                showScreen('screen-level-2');
+            } else if (levelNum === 3) {
+                gameState.l3Index = 0;
+                renderL3Question();
+                showScreen('screen-level-3');
+            } else if (levelNum === 4) {
+                gameState.l4Index = 0;
+                renderL4Question();
+                showScreen('screen-level-4');
+            } else if (levelNum === 5) {
+                gameState.l5Index = 0;
+                renderL5Question();
+                showScreen('screen-level-5');
+            }
+        }
+
+        function renderL1Question() {
+            const item = level1Data[gameState.l1Index];
+            document.getElementById('l1-q-num').innerText = gameState.l1Index + 1;
+            document.getElementById('l1-q-total').innerText = level1Data.length;
+            document.getElementById('l1-question-text').innerText = item.q;
+
+            const optionsContainer = document.getElementById('l1-options-container');
+            optionsContainer.innerHTML = '';
+            document.getElementById('l1-feedback').classList.add('hidden');
+
+            item.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 glass-card hover:bg-zinc-100 hover:border-maroon-600 text-left rounded-xl border border-zinc-300 font-medium text-sm transition transform active:scale-98 flex items-center justify-between text-zinc-900";
+                btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-zinc-500"></i>`;
+                btn.onclick = () => answerL1(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function answerL1(selectedIndex) {
+            const item = level1Data[gameState.l1Index];
+            const feedbackEl = document.getElementById('l1-feedback');
+            const feedbackText = document.getElementById('l1-feedback-text');
+            const optionsContainer = document.getElementById('l1-options-container');
+
+            Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === item.correct) {
+                playSound('correct');
+                updateScore(5);
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-emerald-50 border border-emerald-300 text-emerald-950 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg mr-2 flex-shrink-0"></i> <div><strong>Correct!</strong> <span class="bg-emerald-100 text-emerald-900 px-2 py-1 rounded border border-emerald-300 inline-block mt-1 font-semibold">${item.explanation}</span></div>`;
+            } else {
+                playSound('wrong');
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-zinc-100 border border-zinc-300 text-zinc-800 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-xmark text-zinc-600 text-lg mr-2 flex-shrink-0"></i> <span><strong>Incorrect.</strong> ${item.explanation}</span>`;
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function nextL1Question() {
+            gameState.l1Index++;
+            if (gameState.l1Index < level1Data.length) {
+                renderL1Question();
+            } else {
+                startLevel(2);
+            }
+        }
+
+        function renderL2Card() {
+            if (gameState.l2Index >= level2Data.length) {
+                startLevel(3);
+                return;
+            }
+
+            const item = level2Data[gameState.l2Index];
+            document.getElementById('l2-count').innerText = gameState.l2Index;
+            document.getElementById('l2-total').innerText = level2Data.length;
+            document.getElementById('l2-feedback').classList.add('hidden');
+
+            const container = document.getElementById('l2-active-card-container');
+            container.innerHTML = `
+                <div class="glass-card p-6 rounded-2xl border-2 border-maroon-700 shadow-lg text-center space-y-3">
+                    <div class="w-16 h-16 bg-gradient-to-tr from-maroon-900 to-maroon-700 rounded-full flex items-center justify-center mx-auto text-2xl text-white shadow-md border border-maroon-600">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-zinc-900">${item.name}</h3>
+                        <span class="text-xs font-mono bg-zinc-100 text-maroon-900 px-2.5 py-1 rounded border border-zinc-300 font-semibold">${item.formula}</span>
+                    </div>
+                    <p class="text-xs text-zinc-600 font-medium italic">${item.desc}</p>
+                </div>
+            `;
+        }
+
+        function sortItemL2(chosenType) {
+            const item = level2Data[gameState.l2Index];
+            const feedback = document.getElementById('l2-feedback');
+
+            if (chosenType === item.type) {
+                playSound('correct');
+                updateScore(5);
+                feedback.className = "p-4 rounded-xl text-center font-medium text-sm transition bg-emerald-50 border border-emerald-300 text-emerald-950 block shadow-sm";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i><strong>Spot On!</strong> <span class="bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded border border-emerald-300 inline-block font-semibold ml-1">${item.name} is classified as a <strong>${item.type}</strong>.</span>`;
+            } else {
+                playSound('wrong');
+                feedback.className = "p-4 rounded-xl text-center font-medium text-sm transition bg-zinc-100 border border-zinc-300 text-zinc-800 block shadow-sm";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-zinc-600 mr-2"></i><strong>Incorrect:</strong> ${item.name} is actually a <strong>${item.type}</strong>.`;
+            }
+
+            setTimeout(() => {
+                gameState.l2Index++;
+                renderL2Card();
+            }, 1400);
+        }
+
+        function renderL3Question() {
+            const item = level3Data[gameState.l3Index];
+            document.getElementById('l3-q-num').innerText = gameState.l3Index + 1;
+            document.getElementById('l3-q-total').innerText = level3Data.length;
+            document.getElementById('l3-substance-title').innerText = item.title;
+            document.getElementById('l3-substance-desc').innerText = item.desc;
+
+            const optionsContainer = document.getElementById('l3-options');
+            optionsContainer.innerHTML = '';
+            document.getElementById('l3-feedback').classList.add('hidden');
+
+            item.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 glass-card hover:bg-zinc-100 hover:border-maroon-600 text-left rounded-xl border border-zinc-300 font-medium text-sm transition transform active:scale-98 flex items-center justify-between text-zinc-900";
+                btn.innerHTML = `<span>${opt.text}</span> <i class="fa-regular fa-circle text-zinc-500"></i>`;
+                btn.onclick = () => answerL3(opt.correct, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function answerL3(isCorrect, btnEl) {
+            const item = level3Data[gameState.l3Index];
+            const feedbackEl = document.getElementById('l3-feedback');
+            const feedbackText = document.getElementById('l3-feedback-text');
+            const optionsContainer = document.getElementById('l3-options');
+
+            Array.from(optionsContainer.children).forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                playSound('correct');
+                updateScore(5);
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-emerald-50 border border-emerald-300 text-emerald-950 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg mr-2 flex-shrink-0"></i> <div><strong>Excellent!</strong> <span class="bg-emerald-100 text-emerald-900 px-2 py-1 rounded border border-emerald-300 inline-block mt-1 font-semibold">${item.explanation}</span></div>`;
+            } else {
+                playSound('wrong');
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-zinc-100 border border-zinc-300 text-zinc-800 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-xmark text-zinc-600 text-lg mr-2 flex-shrink-0"></i> <span><strong>Not quite.</strong> ${item.explanation}</span>`;
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function nextL3Question() {
+            gameState.l3Index++;
+            if (gameState.l3Index < level3Data.length) {
+                renderL3Question();
+            } else {
+                startLevel(4);
+            }
+        }
+
+        function renderL4Question() {
+            const item = level4Data[gameState.l4Index];
+            document.getElementById('l4-q-num').innerText = gameState.l4Index + 1;
+            document.getElementById('l4-q-total').innerText = level4Data.length;
+            document.getElementById('l4-item-name').innerText = item.name;
+            document.getElementById('l4-item-formula').innerText = `Formula: ${item.formula}`;
+            document.getElementById('l4-feedback').classList.add('hidden');
+        }
+
+        function answerL4(userSaidYes) {
+            const item = level4Data[gameState.l4Index];
+            const feedbackEl = document.getElementById('l4-feedback');
+            const feedbackText = document.getElementById('l4-feedback-text');
+
+            if (userSaidYes === item.onTable) {
+                playSound('correct');
+                updateScore(5);
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-emerald-50 border border-emerald-300 text-emerald-950 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg mr-2 flex-shrink-0"></i> <div><strong>Correct!</strong> <span class="bg-emerald-100 text-emerald-900 px-2 py-1 rounded border border-emerald-300 inline-block mt-1 font-semibold">${item.reason}</span></div>`;
+            } else {
+                playSound('wrong');
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-zinc-100 border border-zinc-300 text-zinc-800 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-xmark text-zinc-600 text-lg mr-2 flex-shrink-0"></i> <span><strong>Incorrect.</strong> ${item.reason}</span>`;
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function nextL4Question() {
+            gameState.l4Index++;
+            if (gameState.l4Index < level4Data.length) {
+                renderL4Question();
+            } else {
+                startLevel(5);
+            }
+        }
+
+        function renderL5Question() {
+            const item = level5Data[gameState.l5Index];
+            document.getElementById('l5-q-num').innerText = gameState.l5Index + 1;
+            document.getElementById('l5-q-total').innerText = level5Data.length;
+            document.getElementById('l5-sample-name').innerText = item.name;
+            document.getElementById('l5-sample-desc').innerText = item.desc;
+            document.getElementById('l5-feedback').classList.add('hidden');
+
+            const nextBtn = document.getElementById('l5-next-btn');
+            if (gameState.l5Index === level5Data.length - 1) {
+                nextBtn.innerHTML = `Finish Lab <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            } else {
+                nextBtn.innerHTML = `Next <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+        }
+
+        function answerL5(chosenMethod) {
+            const item = level5Data[gameState.l5Index];
+            const feedbackEl = document.getElementById('l5-feedback');
+            const feedbackText = document.getElementById('l5-feedback-text');
+
+            if (chosenMethod === item.correct) {
+                playSound('correct');
+                updateScore(5);
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-emerald-50 border border-emerald-300 text-emerald-950 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-flask-vial text-emerald-600 text-lg mr-2 flex-shrink-0"></i> <div><strong>Correct Lab Technique!</strong> <span class="bg-emerald-100 text-emerald-900 px-2 py-1 rounded border border-emerald-300 inline-block mt-1 font-semibold">${item.explanation}</span></div>`;
+            } else {
+                playSound('wrong');
+                feedbackEl.className = "p-4 rounded-xl text-sm font-medium transition flex items-center justify-between bg-zinc-100 border border-zinc-300 text-zinc-800 shadow-sm";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-xmark text-zinc-600 text-lg mr-2 flex-shrink-0"></i> <span><strong>Incorrect Technique.</strong> ${item.explanation}</span>`;
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function nextL5Question() {
+            gameState.l5Index++;
+            if (gameState.l5Index < level5Data.length) {
+                renderL5Question();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            playSound('win');
+            showScreen('screen-results');
+            document.getElementById('final-score').innerText = gameState.score;
+
+            const totalPossible = (level1Data.length + level2Data.length + level3Data.length + level4Data.length + level5Data.length) * 5;
+            document.getElementById('max-score-display').innerText = totalPossible;
+
+            const percentage = (gameState.score / totalPossible) * 100;
+            const ratingEl = document.getElementById('final-rating');
+
+            if (percentage >= 85) {
+                ratingEl.innerText = "Master Chemist (Gold)";
+                ratingEl.className = "text-lg font-black text-maroon-800";
+            } else if (percentage >= 70) {
+                ratingEl.innerText = "Senior Lab Specialist (Silver)";
+                ratingEl.className = "text-lg font-black text-zinc-700";
+            } else {
+                ratingEl.innerText = "Apprentice Scientist (Bronze)";
+                ratingEl.className = "text-lg font-black text-stone-800";
+            }
+
+            try {
+                confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } catch (e) {
+                console.log("Confetti library loaded.");
+            }
+        }
+
+        // Initialize on Load
+        window.onload = function() {
+            console.log("Scope 13 Explore 2 Activity - Maroon Theme initialized successfully.");
+        };
+    </script>
+</body>
+</html>
