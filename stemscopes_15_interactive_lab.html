@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STEMscopes 15: Particle Motion & Arrangement Interactive Lab</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Tone.js for sound effects -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #fffaf5 0%, #fff4e8 50%, #fef3c7 100%);
+      color: #292524;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .brand-font {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    .mono-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Custom range sliders with bright warm energetic styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #fed7aa;
+      border-radius: 9999px;
+      height: 10px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #f97316;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.45);
+      border: 3px solid #ffffff;
+      transition: transform 0.1s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Shimmer & Warm Energetic Glow Animations */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 20px rgba(249, 115, 22, 0.18); }
+      50% { box-shadow: 0 8px 30px rgba(245, 158, 11, 0.35); }
+    }
+    .glow-effect {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+
+    .canvas-container {
+      position: relative;
+      background: radial-gradient(circle at center, #ffffff 0%, #fff7ed 60%, #ffedd5 100%);
+      border: 2px solid #fdba74;
+    }
+
+    /* Glassmorphism utility with bright, warm, inviting backdrop */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(251, 146, 60, 0.28);
+      box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.07), 0 8px 10px -6px rgba(234, 88, 12, 0.04);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+  <header class="w-full glass-card sticky top-0 z-50 border-b border-orange-200/80 px-4 py-3 sm:px-8 bg-white/90">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/25">
+          <i class="fa-solid fa-atom fa-spin-pulse" style="--fa-animation-duration: 6s;"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-200">TN Standard 7.PS1.3</span>
+            <span class="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">STEMscopes 15</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-stone-900 brand-font">Particle Motion & Arrangement Lab</h1>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 bg-amber-100/70 p-1.5 rounded-xl border border-amber-200">
+        <button onclick="switchTab('sim')" id="tab-sim" class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25">
+          <i class="fa-solid fa-flask"></i> Molecular Simulator
+        </button>
+        <button onclick="switchTab('diagram')" id="tab-diagram" class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all text-stone-700 hover:text-orange-600 hover:bg-white/80">
+          <i class="fa-solid fa-chart-line"></i> Phase Diagram
+        </button>
+        <button onclick="switchTab('game')" id="tab-game" class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all text-stone-700 hover:text-orange-600 hover:bg-white/80">
+          <i class="fa-solid fa-gamepad"></i> Mini-Game: Phase Rush
+        </button>
+        <button onclick="switchTab('concept')" id="tab-concept" class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all text-stone-700 hover:text-orange-600 hover:bg-white/80">
+          <i class="fa-solid fa-diagram-project"></i> Concept Map
+        </button>
+        <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all text-stone-700 hover:text-orange-600 hover:bg-white/80">
+          <i class="fa-solid fa-graduation-cap"></i> DOK 3 Mastery
+        </button>
+      </nav>
+
+      <!-- Audio Mute & Info -->
+      <div class="flex items-center gap-3">
+        <button id="soundToggle" onclick="toggleAudio()" class="w-9 h-9 rounded-lg bg-white hover:bg-orange-50 text-stone-700 hover:text-orange-600 border border-orange-200 shadow-sm flex items-center justify-center transition-colors" title="Toggle Sound">
+          <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+        </button>
+        <button onclick="openModal('help-modal')" class="w-9 h-9 rounded-lg bg-white hover:bg-orange-50 text-stone-700 hover:text-orange-600 border border-orange-200 shadow-sm flex items-center justify-center transition-colors" title="Lab Help & Info">
+          <i class="fa-solid fa-circle-question"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notice Banner for Tennessee Science Curriculum -->
+  <div class="bg-gradient-to-r from-amber-100 via-orange-100/90 to-amber-100 border-b border-orange-200/80 py-2 px-4 text-center text-xs text-stone-800 shadow-sm">
+    <span class="font-bold text-orange-700">7th Grade Target:</span> Analyze & interpret data to describe particle motion in solids, liquids, and gases under varying thermal energy & pressure.
+  </div>
+
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <section id="section-sim" class="space-y-6">
+      <!-- Top Overview Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Simulation Canvas Card (2 Cols) -->
+        <div class="lg:col-span-2 glass-card rounded-2xl p-4 sm:p-5 flex flex-col space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-orange-200/80 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-orange-500 animate-ping"></span>
+              <h2 class="text-lg font-bold brand-font text-stone-900 flex items-center gap-2">
+                Kinetic Molecular Chamber
+              </h2>
+            </div>
+            <!-- Quick Preset Badges -->
+            <div class="flex items-center gap-1.5">
+              <button onclick="setDirectPhase('solid')" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200 transition">Solid (Ice)</button>
+              <button onclick="setDirectPhase('liquid')" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-orange-100 text-orange-800 border border-orange-300 hover:bg-orange-200 transition">Liquid (Water)</button>
+              <button onclick="setDirectPhase('gas')" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-rose-100 text-rose-800 border border-rose-300 hover:bg-rose-200 transition">Gas (Vapor)</button>
+              <button onclick="setDirectPhase('plasma')" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-yellow-100 text-yellow-800 border border-yellow-300 hover:bg-yellow-200 transition">Plasma</button>
+            </div>
+          </div>
+
+          <!-- Canvas Container -->
+          <div class="canvas-container rounded-xl overflow-hidden relative shadow-md aspect-[16/10] w-full flex items-center justify-center">
+            <canvas id="simCanvas" class="w-full h-full block"></canvas>
+            
+            <!-- Real-time HUD overlay on canvas (Bright translucent card) -->
+            <div class="absolute top-3 left-3 bg-white/92 backdrop-blur-md border border-orange-200 px-3.5 py-2.5 rounded-xl text-xs space-y-1 shadow-md pointer-events-none">
+              <div class="flex justify-between gap-3 text-stone-600">
+                <span class="font-medium">Phase State:</span>
+                <span id="hudState" class="font-extrabold text-orange-600">Solid (Ice)</span>
+              </div>
+              <div class="flex justify-between gap-3 text-stone-600">
+                <span class="font-medium">Mean Kinetic Energy:</span>
+                <span id="hudKE" class="font-extrabold text-amber-700">Low (Vibrating)</span>
+              </div>
+              <div class="flex justify-between gap-3 text-stone-600">
+                <span class="font-medium">Container Pressure:</span>
+                <span id="hudPressureVal" class="font-extrabold text-stone-800 mono-font">1.00 atm</span>
+              </div>
+            </div>
+
+            <!-- Heat / Cool visual effect indicator -->
+            <div id="burnerGlow" class="absolute bottom-0 inset-x-0 h-8 bg-gradient-to-t from-orange-500/40 to-transparent opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+            <div id="freezerGlow" class="absolute top-0 inset-x-0 h-8 bg-gradient-to-b from-sky-400/40 to-transparent opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+          </div>
+
+          <!-- Quick Controls Under Canvas -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            <button onclick="applyThermalBurst(25)" class="p-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-fire text-yellow-200"></i> Add Heat (+25K)
+            </button>
+            <button onclick="applyThermalBurst(-25)" class="p-2.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 border border-sky-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-regular fa-snowflake text-sky-600"></i> Remove Heat (-25K)
+            </button>
+            <button onclick="toggleVectors()" id="vectorBtn" class="p-2.5 rounded-xl bg-white hover:bg-orange-50 text-stone-700 border border-orange-200 font-medium text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-arrow-trend-up text-orange-500"></i> Vectors: OFF
+            </button>
+            <button onclick="resetSimulator()" class="p-2.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 font-medium text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-rotate-left text-stone-500"></i> Reset Defaults
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-5">
+          <div>
+            <h3 class="text-base font-bold text-stone-900 brand-font border-b border-orange-200/80 pb-2 mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-orange-500"></i> State & Variable Controls
+            </h3>
+
+            <!-- Temperature Slider -->
+            <div class="space-y-2 mb-5">
+              <div class="flex justify-between items-center text-sm">
+                <span class="font-bold text-stone-800 flex items-center gap-1.5">
+                  <i class="fa-solid fa-temperature-half text-orange-500"></i> Temperature
+                </span>
+                <span id="tempDisplay" class="font-extrabold text-orange-700 mono-font text-base">260 K (-13°C)</span>
+              </div>
+              <input type="range" id="tempSlider" min="50" max="650" value="260" class="w-full">
+              <div class="flex justify-between text-[11px] text-stone-500 font-medium">
+                <span>Solid (0-273K)</span>
+                <span>Liquid (273-373K)</span>
+                <span>Gas (373K+)</span>
+              </div>
+            </div>
+
+            <!-- Pressure / Piston Slider -->
+            <div class="space-y-2 mb-5">
+              <div class="flex justify-between items-center text-sm">
+                <span class="font-bold text-stone-800 flex items-center gap-1.5">
+                  <i class="fa-solid fa-compress text-orange-500"></i> Pressure / Chamber Volume
+                </span>
+                <span id="pressureDisplay" class="font-extrabold text-amber-800 mono-font text-base">1.00 atm</span>
+              </div>
+              <input type="range" id="pressureSlider" min="0.2" max="3.0" step="0.05" value="1.0" class="w-full">
+              <div class="flex justify-between text-[11px] text-stone-500 font-medium">
+                <span>Low (0.2 atm - Expand)</span>
+                <span>Standard (1.0 atm)</span>
+                <span>High (3.0 atm - Squeeze)</span>
+              </div>
+            </div>
+
+            <!-- Particle Counter & Types -->
+            <div class="space-y-2 mb-4">
+              <div class="flex justify-between items-center text-sm">
+                <span class="font-bold text-stone-800">Substance Mode</span>
+                <span class="text-xs text-orange-700 font-bold font-mono">H₂O Molecules</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <button onclick="setSubstance('water')" id="sub-water" class="p-2 rounded-lg border border-orange-400 bg-orange-500 text-white font-bold text-center shadow-sm transition">Water (Polar)</button>
+                <button onclick="setSubstance('noble')" id="sub-noble" class="p-2 rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 text-center transition">Noble Gas (Neon)</button>
+              </div>
+            </div>
+
+            <!-- Misconception Highlight Toggle -->
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs space-y-1.5 shadow-sm">
+              <div class="flex items-center gap-1.5 font-bold text-orange-800">
+                <i class="fa-solid fa-lightbulb text-amber-500"></i> Misconception Alert!
+              </div>
+              <p class="leading-relaxed text-stone-700">
+                Notice: The <strong class="text-orange-700">particles themselves do NOT shrink or grow</strong> when heated! Only their <strong class="text-orange-700">speed</strong> and <strong class="text-orange-700">spacing</strong> change.
+              </p>
+            </div>
+          </div>
+
+          <!-- Real-Time Particle State Summary Box -->
+          <div class="bg-orange-50/70 rounded-xl p-3.5 border border-orange-200 text-xs space-y-2">
+            <div class="font-bold text-stone-800 flex items-center justify-between">
+              <span>Scientific Arrangement:</span>
+              <span id="arrangementSummary" class="text-orange-700 font-bold">Tightly packed lattice</span>
+            </div>
+            <div class="flex justify-between text-stone-600">
+              <span>Shape:</span>
+              <span id="shapeSummary" class="font-bold text-stone-800">Definite Shape</span>
+            </div>
+            <div class="flex justify-between text-stone-600">
+              <span>Volume:</span>
+              <span id="volumeSummary" class="font-bold text-stone-800">Definite Volume</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-orange-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-arrows-split-up-and-left text-orange-500"></i> Trigger 6 Fundamental Phase Changes
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <!-- Melting -->
+          <button onclick="triggerPhaseChange('melting')" class="group p-3 rounded-xl bg-white hover:bg-orange-50 border border-orange-200 hover:border-orange-400 flex flex-col items-center text-center shadow-sm transition">
+            <span class="text-lg text-amber-500 mb-1"><i class="fa-solid fa-water"></i></span>
+            <span class="text-xs font-bold text-stone-800 group-hover:text-orange-600">Melting</span>
+            <span class="text-[10px] text-stone-500">Solid &rarr; Liquid (+Heat)</span>
+          </button>
+          <!-- Freezing -->
+          <button onclick="triggerPhaseChange('freezing')" class="group p-3 rounded-xl bg-white hover:bg-sky-50 border border-orange-200 hover:border-sky-400 flex flex-col items-center text-center shadow-sm transition">
+            <span class="text-lg text-sky-500 mb-1"><i class="fa-regular fa-snowflake"></i></span>
+            <span class="text-xs font-bold text-stone-800 group-hover:text-sky-600">Freezing</span>
+            <span class="text-[10px] text-stone-500">Liquid &rarr; Solid (-Heat)</span>
+          </button>
+          <!-- Vaporization -->
+          <button onclick="triggerPhaseChange('vaporization')" class="group p-3 rounded-xl bg-white hover:bg-orange-50 border border-orange-200 hover:border-orange-400 flex flex-col items-center text-center shadow-sm transition">
+            <span class="text-lg text-orange-500 mb-1"><i class="fa-solid fa-wind"></i></span>
+            <span class="text-xs font-bold text-stone-800 group-hover:text-orange-600">Boiling / Evap</span>
+            <span class="text-[10px] text-stone-500">Liquid &rarr; Gas (+Heat)</span>
+          </button>
+          <!-- Condensation -->
+          <button onclick="triggerPhaseChange('condensation')" class="group p-3 rounded-xl bg-white hover:bg-emerald-50 border border-orange-200 hover:border-emerald-400 flex flex-col items-center text-center shadow-sm transition">
+            <span class="text-lg text-emerald-500 mb-1"><i class="fa-solid fa-cloud-rain"></i></span>
+            <span class="text-xs font-bold text-stone-800 group-hover:text-emerald-600">Condensation</span>
+            <span class="text-[10px] text-stone-500">Gas &rarr; Liquid (-Heat)</span>
+          </button>
+          <!-- Sublimation -->
+          <button onclick="triggerPhaseChange('sublimation')" class="group p-3 rounded-xl bg-white hover:bg-rose-50 border border-orange-200 hover:border-rose-400 flex flex-col items-center text-center shadow-sm transition">
+            <span class="text-lg text-rose-500 mb-1"><i class="fa-solid fa-up-long"></i></span>
+            <span class="text-xs font-bold text-stone-800 group-hover:text-rose-600">Sublimation</span>
+            <span class="text-[10px] text-stone-500">Solid &rarr; Gas (+Direct)</span>
+          </button>
+          <!-- Deposition -->
+          <button onclick="triggerPhaseChange('deposition')" class="group p-3 rounded-xl bg-white hover:bg-amber-50 border border-orange-200 hover:border-amber-400 flex flex-col items-center text-center shadow-sm transition">
+            <span class="text-lg text-amber-500 mb-1"><i class="fa-solid fa-down-long"></i></span>
+            <span class="text-xs font-bold text-stone-800 group-hover:text-amber-600">Deposition</span>
+            <span class="text-[10px] text-stone-500">Gas &rarr; Solid (-Direct)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-diagram" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-200/80 pb-4 mb-6">
+          <div>
+            <span class="text-xs uppercase font-bold text-orange-600 tracking-wider">TN Science Data Analysis</span>
+            <h2 class="text-2xl font-bold brand-font text-stone-900">Pressure vs. Temperature Phase Diagram Explorer</h2>
+            <p class="text-stone-600 text-sm mt-1">Click anywhere on the graph or drag the probe marker to inspect how changing temperature & pressure alters the state of matter.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="setStandardConditions()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white text-xs font-bold shadow-md shadow-orange-500/25 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs"></i> Standard (1 atm)
+            </button>
+            <button onclick="locatePoint('triple')" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 text-xs font-bold transition">
+              Triple Point (B)
+            </button>
+            <button onclick="locatePoint('critical')" class="px-3.5 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-900 text-xs font-bold transition">
+              Critical Point (C)
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Phase Diagram SVG Map -->
+          <div class="lg:col-span-8 bg-white rounded-2xl p-4 border border-orange-200/90 shadow-md relative select-none">
+            <svg id="phaseSvg" viewBox="0 0 700 450" class="w-full h-auto cursor-crosshair">
+              <!-- Defs for warm luminous gradients -->
+              <defs>
+                <linearGradient id="solidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fdba74" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#fed7aa" stop-opacity="0.3"/>
+                </linearGradient>
+                <linearGradient id="liquidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fde047" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#fef08a" stop-opacity="0.3"/>
+                </linearGradient>
+                <linearGradient id="gasGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fca5a5" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#fecdd3" stop-opacity="0.3"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Regions -->
+              <path id="pathSolid" d="M 60 50 L 350 50 L 320 300 Q 200 370 60 400 Z" fill="url(#solidGrad)" stroke="#f97316" stroke-width="2"/>
+              <path id="pathLiquid" d="M 350 50 L 650 50 L 610 150 Q 450 240 320 300 Z" fill="url(#liquidGrad)" stroke="#eab308" stroke-width="2"/>
+              <path id="pathGas" d="M 60 400 Q 200 370 320 300 Q 450 240 610 150 L 650 150 L 650 400 L 60 400 Z" fill="url(#gasGrad)" stroke="#f43f5e" stroke-width="2"/>
+
+              <!-- Axis lines -->
+              <line x1="60" y1="50" x2="60" y2="400" stroke="#44403c" stroke-width="2.5"/>
+              <line x1="60" y1="400" x2="660" y2="400" stroke="#44403c" stroke-width="2.5"/>
+
+              <!-- Boundary Transition Lines -->
+              <path d="M 320 300 L 350 50" stroke="#b45309" stroke-width="3" stroke-dasharray="3,3"/>
+              <path d="M 320 300 Q 450 240 610 150" stroke="#b45309" stroke-width="3"/>
+              <path d="M 60 400 Q 200 370 320 300" stroke="#e11d48" stroke-width="3"/>
+
+              <!-- 1 atm Reference Line -->
+              <line x1="60" y1="210" x2="650" y2="210" stroke="#7c3aed" stroke-opacity="0.6" stroke-width="1.8" stroke-dasharray="5,5"/>
+              <text x="65" y="202" fill="#7c2d12" font-size="11" font-weight="bold">1.0 atm (Standard Normal Atmospheric Pressure)</text>
+
+              <!-- Melting Point & Boiling point projection at 1 atm -->
+              <line x1="337" y1="210" x2="337" y2="400" stroke="#b45309" stroke-width="1.2" stroke-dasharray="3,3"/>
+              <text x="315" y="416" fill="#b45309" font-size="11" font-weight="bold">0°C (Melting)</text>
+
+              <line x1="500" y1="210" x2="500" y2="400" stroke="#c2410c" stroke-width="1.2" stroke-dasharray="3,3"/>
+              <text x="475" y="416" fill="#c2410c" font-size="11" font-weight="bold">100°C (Boiling)</text>
+
+              <!-- Region Labels -->
+              <text x="180" y="190" fill="#9a3412" font-size="26" font-weight="800" letter-spacing="2">SOLID</text>
+              <text x="440" y="130" fill="#854d0e" font-size="26" font-weight="800" letter-spacing="2">LIQUID</text>
+              <text x="460" y="340" fill="#9f1239" font-size="26" font-weight="800" letter-spacing="2">GAS</text>
+
+              <!-- Transition Indicators -->
+              <text x="355" y="100" fill="#78350f" font-size="11" font-weight="bold">Melting &rlarr; Freezing</text>
+              <text x="480" y="225" fill="#78350f" font-size="11" font-weight="bold">Vaporization &rlarr; Condensation</text>
+              <text x="150" y="360" fill="#881337" font-size="11" font-weight="bold">Sublimation &rlarr; Deposition</text>
+
+              <!-- Critical & Triple Points -->
+              <circle cx="320" cy="300" r="7" fill="#d97706" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="330" y="315" fill="#b45309" font-size="12" font-weight="bold">B (Triple Point)</text>
+
+              <circle cx="610" cy="150" r="7" fill="#e11d48" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="560" y="140" fill="#be123c" font-size="12" font-weight="bold">C (Critical Point)</text>
+
+              <!-- Axis labels -->
+              <text x="25" y="230" fill="#292524" font-size="13" font-weight="bold" transform="rotate(-90 25,230)" text-anchor="middle">Pressure (atm) &rarr;</text>
+              <text x="360" y="440" fill="#292524" font-size="13" font-weight="bold" text-anchor="middle">Temperature (K) &rarr;</text>
+
+              <!-- Interactive Probe Marker -->
+              <g id="probeMarker" transform="translate(337, 210)">
+                <circle r="12" fill="#f97316" fill-opacity="0.35" stroke="#ea580c" stroke-width="2"/>
+                <circle r="5" fill="#ea580c"/>
+                <line x1="0" y1="-16" x2="0" y2="16" stroke="#ea580c" stroke-width="2"/>
+                <line x1="-16" y1="0" x2="16" y2="0" stroke="#ea580c" stroke-width="2"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Phase Diagram Info & Data Analysis Card -->
+          <div class="lg:col-span-4 space-y-4">
+            <div class="bg-white rounded-2xl p-5 border border-orange-200 shadow-md">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-orange-800 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-radar text-orange-500"></i> Active Probe Coordinates
+              </h3>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center bg-orange-50/70 p-2.5 rounded-xl border border-orange-200">
+                  <span class="text-xs font-semibold text-stone-600">Phase Identified:</span>
+                  <span id="diagramPhaseBadge" class="px-2.5 py-1 text-xs font-extrabold rounded-lg bg-orange-500 text-white shadow-sm">Liquid (Water)</span>
+                </div>
+                <div class="flex justify-between items-center bg-orange-50/70 p-2.5 rounded-xl border border-orange-200">
+                  <span class="text-xs font-semibold text-stone-600">Temperature (T):</span>
+                  <span id="diagramTempVal" class="font-bold text-orange-800 mono-font text-sm">298 K (25°C)</span>
+                </div>
+                <div class="flex justify-between items-center bg-orange-50/70 p-2.5 rounded-xl border border-orange-200">
+                  <span class="text-xs font-semibold text-stone-600">Pressure (P):</span>
+                  <span id="diagramPressVal" class="font-bold text-amber-800 mono-font text-sm">1.00 atm</span>
+                </div>
+              </div>
+
+              <!-- Scientific Analysis Insight -->
+              <div class="mt-4 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs space-y-2">
+                <div class="font-bold text-orange-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-microscope text-orange-500"></i> Tennessee DOK-3 Analysis:
+                </div>
+                <p id="diagramExplanation" class="text-stone-700 leading-relaxed font-medium">
+                  At 1.0 atm, water remains liquid between 273 K (0°C) and 373 K (100°C). Lowering pressure below 0.006 atm triggers sublimation directly from ice to gas!
+                </p>
+              </div>
+
+              <!-- Textbook Challenge Connect -->
+              <div class="mt-4 pt-3 border-t border-orange-100">
+                <div class="text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-1">Textbook Connect (p. 128)</div>
+                <p class="text-xs text-stone-600 leading-relaxed">
+                  <strong>Why does water boil at lower temperatures at high altitudes?</strong> Atmospheric pressure is lower on mountains, so liquid molecules need less thermal kinetic energy to overcome external pressure and escape into gas.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-game" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-200/80 pb-4 mb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-md bg-orange-100 text-orange-800 border border-orange-200 text-xs font-bold uppercase">Mini-Game</span>
+              <h2 class="text-2xl font-bold brand-font text-stone-900">Phase Rush: Molecular Commander</h2>
+            </div>
+            <p class="text-stone-600 text-sm mt-1">Control chamber heat & pressure to morph atoms into the required state of matter before the time bar expires!</p>
+          </div>
+          <!-- Game Score & Streak Bar -->
+          <div class="flex items-center gap-3">
+            <div class="bg-white px-4 py-2 rounded-xl border border-orange-200 shadow-sm text-center">
+              <div class="text-[10px] text-stone-500 uppercase font-bold">Score</div>
+              <div id="gameScore" class="text-xl font-black text-orange-600 mono-font">0</div>
+            </div>
+            <div class="bg-white px-4 py-2 rounded-xl border border-orange-200 shadow-sm text-center">
+              <div class="text-[10px] text-stone-500 uppercase font-bold">Streak</div>
+              <div id="gameStreak" class="text-xl font-black text-amber-600 mono-font">0x</div>
+            </div>
+            <div class="bg-white px-4 py-2 rounded-xl border border-orange-200 shadow-sm text-center">
+              <div class="text-[10px] text-stone-500 uppercase font-bold">Time Left</div>
+              <div id="gameTimer" class="text-xl font-black text-rose-600 mono-font">15s</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Main Play Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          
+          <!-- Canvas Target Chamber (2 Cols) -->
+          <div class="lg:col-span-2 relative bg-white rounded-2xl border-2 border-orange-300 overflow-hidden shadow-md flex flex-col items-center justify-center p-3">
+            <!-- Game Canvas -->
+            <canvas id="gameCanvas" width="600" height="380" class="w-full h-auto rounded-xl bg-gradient-to-b from-amber-50/50 to-orange-50/40"></canvas>
+
+            <!-- Mission Banner Overlay -->
+            <div class="w-full mt-3 bg-orange-50 border border-orange-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+              <div class="flex items-center gap-2">
+                <span class="text-xs uppercase text-stone-600 font-bold">Current Target Mission:</span>
+                <span id="gameTargetState" class="px-3 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white font-black text-sm tracking-wide shadow-md shadow-orange-500/25">
+                  SOLID: FREEZE LATTICE
+                </span>
+              </div>
+              <div class="text-xs font-medium text-stone-700" id="gameHint">
+                Vibrate in place; keep molecules locked tightly together.
+              </div>
+            </div>
+
+            <!-- Start / Game Over Screen Overlay -->
+            <div id="gameOverlay" class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center z-20">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 text-white flex items-center justify-center text-3xl mb-3 shadow-lg shadow-orange-500/30">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <h3 id="overlayTitle" class="text-2xl font-black brand-font text-stone-900 mb-2">Phase Rush: STEM Challenge</h3>
+              <p id="overlayDesc" class="text-stone-600 text-sm max-w-md mb-6 leading-relaxed">
+                Transform matter on command! Follow TN 7.PS1.3 rules: add heat to speed up particles for liquid/gas, or freeze to lock them into fixed lattice vibrations.
+              </p>
+              <button onclick="startGame()" id="startBtn" class="px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-bold text-base shadow-xl shadow-orange-500/30 transition-all transform hover:scale-105">
+                <i class="fa-solid fa-play mr-2"></i> Start Challenge
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls & Power-Up Panel -->
+          <div class="space-y-4">
+            <div class="bg-white rounded-2xl p-5 border border-orange-200 shadow-md space-y-4">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-orange-800 flex items-center gap-2">
+                <i class="fa-solid fa-gamepad text-orange-500"></i> Thermal Thruster Pad
+              </h3>
+              
+              <div class="space-y-2">
+                <label class="text-xs font-semibold text-stone-700 flex justify-between">
+                  <span>Chamber Burner / Cooler</span>
+                  <span id="gameTempIndicator" class="text-orange-700 font-extrabold mono-font">200 K</span>
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="adjustGameTemp(-40)" class="p-3 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-800 font-bold text-xs flex flex-col items-center gap-1 shadow-sm transition">
+                    <i class="fa-regular fa-snowflake text-lg text-sky-600"></i>
+                    <span>CRYO-COOL (-40K)</span>
+                  </button>
+                  <button onclick="adjustGameTemp(40)" class="p-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs flex flex-col items-center gap-1 shadow-sm transition">
+                    <i class="fa-solid fa-fire-flame-curved text-lg text-yellow-200"></i>
+                    <span>HEAT BURST (+40K)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Submit State Confirmation -->
+              <div class="pt-2">
+                <button onclick="submitGameState()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-extrabold text-sm shadow-md shadow-orange-500/30 flex items-center justify-center gap-2 transition transform active:scale-95">
+                  <i class="fa-solid fa-circle-check text-base"></i> LOCK IN PHASE TRANSITION
+                </button>
+              </div>
+
+              <!-- Quick Mission Log -->
+              <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-[11px] space-y-1">
+                <div class="text-orange-900 font-bold uppercase">Tennessee Lab Guidelines:</div>
+                <p class="text-stone-700">
+                  <strong class="text-amber-800">Solid:</strong> Below 273K (tight vibrations)<br>
+                  <strong class="text-orange-800">Liquid:</strong> 273K - 373K (sliding contact)<br>
+                  <strong class="text-rose-800">Gas:</strong> 373K+ (fast random bounces)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-concept" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="border-b border-orange-200/80 pb-4 mb-6">
+          <div class="flex items-center gap-2">
+            <span class="text-xs uppercase font-bold text-orange-700 tracking-wider">STEMscopes 15 Graphic Organizer</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-200 font-semibold">Linking Literacy During-Reading</span>
+          </div>
+          <h2 class="text-2xl font-bold brand-font text-stone-900 mt-1">Concept Definition Map: Three States of Matter</h2>
+          <p class="text-stone-600 text-sm mt-1">Interactive reproduction of your During-Reading student activity. Drag or select the scientific descriptors into their proper categories.</p>
+        </div>
+
+        <!-- Concept Map Interactive Layout -->
+        <div class="bg-white rounded-2xl p-6 border border-orange-200 shadow-md space-y-6">
+          
+          <!-- Central Hub Node -->
+          <div class="flex justify-center">
+            <div class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white font-extrabold text-lg brand-font shadow-lg shadow-orange-500/25 border border-white/40 text-center">
+              Three States of Matter
+              <div class="text-xs font-normal text-amber-100 mt-0.5">TN Standard 7.PS1.3 Exploration</div>
+            </div>
+          </div>
+
+          <!-- 3 States Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Solid Column -->
+            <div class="bg-amber-50/60 rounded-2xl p-4 border border-amber-300 flex flex-col space-y-3">
+              <div class="flex items-center justify-between border-b border-amber-200 pb-2">
+                <span class="font-bold text-amber-900 text-base flex items-center gap-2">
+                  <i class="fa-solid fa-cube text-amber-600"></i> Solid State
+                </span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-amber-200/70 text-amber-900 font-bold">Least Motion</span>
+              </div>
+              
+              <!-- Definition Box -->
+              <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-stone-600">Definition (Own Words):</label>
+                <textarea id="solidDef" rows="2" class="w-full bg-white border border-amber-300 rounded-xl p-2.5 text-xs text-stone-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-400 outline-none shadow-inner" placeholder="Matter with definite shape and volume; particles vibrate in fixed positions."></textarea>
+              </div>
+
+              <!-- Details Slot -->
+              <div class="space-y-1.5">
+                <span class="text-[11px] font-bold uppercase text-stone-600">Scientific Details:</span>
+                <div class="space-y-1 text-xs text-stone-700">
+                  <div class="p-2 rounded-lg bg-white border border-amber-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-dot text-amber-500 text-[10px]"></i> Packed tightly with minimal space
+                  </div>
+                  <div class="p-2 rounded-lg bg-white border border-amber-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-dot text-amber-500 text-[10px]"></i> Strong mutual attraction keeps shape
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real World Example Input -->
+              <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-stone-600">Real-World Examples:</label>
+                <input type="text" id="solidEx" class="w-full bg-white border border-amber-300 rounded-xl p-2 text-xs text-stone-800 focus:border-orange-500 outline-none shadow-inner" placeholder="e.g. Ice cube, iron bar, diamond">
+              </div>
+            </div>
+
+            <!-- Liquid Column -->
+            <div class="bg-orange-50/60 rounded-2xl p-4 border border-orange-300 flex flex-col space-y-3">
+              <div class="flex items-center justify-between border-b border-orange-200 pb-2">
+                <span class="font-bold text-orange-900 text-base flex items-center gap-2">
+                  <i class="fa-solid fa-droplet text-orange-600"></i> Liquid State
+                </span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-orange-200/70 text-orange-900 font-bold">Flowing Contact</span>
+              </div>
+              
+              <!-- Definition Box -->
+              <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-stone-600">Definition (Own Words):</label>
+                <textarea id="liquidDef" rows="2" class="w-full bg-white border border-orange-300 rounded-xl p-2.5 text-xs text-stone-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-400 outline-none shadow-inner" placeholder="Definite volume but no definite shape; takes shape of container."></textarea>
+              </div>
+
+              <!-- Details Slot -->
+              <div class="space-y-1.5">
+                <span class="text-[11px] font-bold uppercase text-stone-600">Scientific Details:</span>
+                <div class="space-y-1 text-xs text-stone-700">
+                  <div class="p-2 rounded-lg bg-white border border-orange-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-dot text-orange-500 text-[10px]"></i> Molecules slide past each other freely
+                  </div>
+                  <div class="p-2 rounded-lg bg-white border border-orange-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-dot text-orange-500 text-[10px]"></i> Cannot be easily compressed
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real World Example Input -->
+              <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-stone-600">Real-World Examples:</label>
+                <input type="text" id="liquidEx" class="w-full bg-white border border-orange-300 rounded-xl p-2 text-xs text-stone-800 focus:border-orange-500 outline-none shadow-inner" placeholder="e.g. Liquid water, honey, oil">
+              </div>
+            </div>
+
+            <!-- Gas Column -->
+            <div class="bg-rose-50/60 rounded-2xl p-4 border border-rose-300 flex flex-col space-y-3">
+              <div class="flex items-center justify-between border-b border-rose-200 pb-2">
+                <span class="font-bold text-rose-900 text-base flex items-center gap-2">
+                  <i class="fa-solid fa-cloud text-rose-600"></i> Gaseous State
+                </span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-rose-200/70 text-rose-900 font-bold">Fast & Random</span>
+              </div>
+              
+              <!-- Definition Box -->
+              <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-stone-600">Definition (Own Words):</label>
+                <textarea id="gasDef" rows="2" class="w-full bg-white border border-rose-300 rounded-xl p-2.5 text-xs text-stone-800 focus:border-rose-500 focus:ring-1 focus:ring-rose-400 outline-none shadow-inner" placeholder="No definite shape or volume; spreads out to fill any closed container."></textarea>
+              </div>
+
+              <!-- Details Slot -->
+              <div class="space-y-1.5">
+                <span class="text-[11px] font-bold uppercase text-stone-600">Scientific Details:</span>
+                <div class="space-y-1 text-xs text-stone-700">
+                  <div class="p-2 rounded-lg bg-white border border-rose-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-dot text-rose-500 text-[10px]"></i> Minimal attraction among molecules
+                  </div>
+                  <div class="p-2 rounded-lg bg-white border border-rose-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-circle-dot text-rose-500 text-[10px]"></i> Highly compressible into smaller volumes
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real World Example Input -->
+              <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-stone-600">Real-World Examples:</label>
+                <input type="text" id="gasEx" class="w-full bg-white border border-rose-300 rounded-xl p-2 text-xs text-stone-800 focus:border-rose-500 outline-none shadow-inner" placeholder="e.g. Oxygen gas, water vapor, helium">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Save / Check Organizer Button -->
+          <div class="flex justify-end pt-2">
+            <button onclick="validateConceptMap()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-orange-500/25 transition">
+              <i class="fa-solid fa-check-double"></i> Check & Save Concept Map
+            </button>
+          </div>
+        </div>
+
+        <!-- 3-2-1 Exit Ticket Section -->
+        <div class="mt-6 bg-white rounded-2xl p-5 border border-orange-200 shadow-md">
+          <h3 class="text-base font-bold text-stone-900 brand-font flex items-center gap-2 border-b border-orange-100 pb-3 mb-4">
+            <i class="fa-solid fa-ticket-simple text-orange-500"></i> Day 1 Lesson Wrap-Up: 3-2-1 Exit Ticket
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200">
+              <div class="font-bold text-amber-900 mb-1">3 Motion Differences:</div>
+              <p class="text-stone-700 text-[11px] leading-relaxed">1. Solids vibrate in place.<br>2. Liquids slide past each other.<br>3. Gases zip freely in all directions.</p>
+            </div>
+            <div class="bg-orange-50 p-3.5 rounded-xl border border-orange-200">
+              <div class="font-bold text-orange-900 mb-1">2 Key Building Blocks:</div>
+              <p class="text-stone-700 text-[11px] leading-relaxed"><strong>Atom:</strong> Smallest particle of an element.<br><strong>Molecule:</strong> Two or more bonded atoms.</p>
+            </div>
+            <div class="bg-rose-50 p-3.5 rounded-xl border border-rose-200">
+              <div class="font-bold text-rose-900 mb-1">1 Golden Rule:</div>
+              <p class="text-stone-700 text-[11px] leading-relaxed">Temperature measures the <em>average kinetic energy</em> of particle motion!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-quiz" class="hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-200/80 pb-4 mb-6">
+          <div>
+            <span class="text-xs uppercase font-bold text-orange-600 tracking-wider">Assessment & Test Prep</span>
+            <h2 class="text-2xl font-bold brand-font text-stone-900">DOK-3 Strategic Thinking & CER Challenge</h2>
+            <p class="text-stone-600 text-sm mt-1">Practice authentic questions curated directly from the STEMscopes 15 unit assessment bank.</p>
+          </div>
+          <!-- Mode Switcher -->
+          <div class="flex bg-amber-100/80 p-1.5 rounded-xl border border-amber-200">
+            <button onclick="setQuizSubTab('mc')" id="btn-sub-mc" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm">Multiple Choice (DOK 3)</button>
+            <button onclick="setQuizSubTab('cer')" id="btn-sub-cer" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 hover:text-orange-600">CER Writing Challenge</button>
+          </div>
+        </div>
+
+        <!-- SubTab A: Multiple Choice -->
+        <div id="sub-panel-mc" class="space-y-6">
+          <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-orange-200 shadow-sm">
+            <span class="text-xs font-bold text-stone-800">Question <span id="qCurrent">1</span> of <span id="qTotal">10</span></span>
+            <span class="text-xs text-orange-700 font-bold font-mono">Score: <span id="quizScoreText">0</span> / 10</span>
+          </div>
+
+          <!-- Question Card Container -->
+          <div id="quizQuestionBox" class="bg-white rounded-2xl p-6 border border-orange-200 shadow-md space-y-5">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="flex justify-between items-center">
+            <button onclick="prevQuestion()" id="prevQBtn" class="px-4 py-2 rounded-xl bg-white hover:bg-orange-50 text-stone-700 border border-orange-200 font-bold text-xs disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Previous
+            </button>
+            <button onclick="nextQuestion()" id="nextQBtn" class="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-xs shadow-md shadow-orange-500/25">
+              Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- SubTab B: CER Writing Challenge -->
+        <div id="sub-panel-cer" class="hidden space-y-6">
+          <div class="bg-white rounded-2xl p-6 border border-orange-200 shadow-md space-y-5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded bg-orange-100 text-orange-800 border border-orange-200 text-xs font-bold uppercase">Prompt</span>
+              <h3 class="text-base font-bold text-stone-900">Why does an inflated balloon left in a hot car expand?</h3>
+            </div>
+            <p class="text-stone-600 text-xs leading-relaxed">
+              Construct a complete scientific explanation using the Kinetic Molecular Theory. Formulate your <strong>Claim</strong>, cite scientific <strong>Evidence</strong> regarding thermal energy, and provide logical <strong>Reasoning</strong> connecting particle movement to volume changes.
+            </p>
+
+            <div class="space-y-4 pt-2">
+              <!-- Claim -->
+              <div>
+                <label class="block text-xs font-bold text-orange-800 uppercase mb-1">1. Claim (Your direct answer):</label>
+                <input type="text" id="cerClaim" class="w-full bg-orange-50/50 border border-orange-300 rounded-xl p-3 text-xs text-stone-800 outline-none focus:border-orange-500 focus:bg-white shadow-inner" placeholder="e.g. The balloon expands because the air particles absorb thermal energy and push outwards with greater force.">
+              </div>
+
+              <!-- Evidence -->
+              <div>
+                <label class="block text-xs font-bold text-amber-800 uppercase mb-1">2. Evidence (Scientific data & facts):</label>
+                <textarea id="cerEvidence" rows="2" class="w-full bg-orange-50/50 border border-orange-300 rounded-xl p-3 text-xs text-stone-800 outline-none focus:border-orange-500 focus:bg-white shadow-inner" placeholder="e.g. As the temperature inside the car rises, thermal energy transfers into the gas molecules, causing them to move faster and farther apart."></textarea>
+              </div>
+
+              <!-- Reasoning -->
+              <div>
+                <label class="block text-xs font-bold text-rose-800 uppercase mb-1">3. Reasoning (Connecting science rule to evidence):</label>
+                <textarea id="cerReasoning" rows="2" class="w-full bg-orange-50/50 border border-orange-300 rounded-xl p-3 text-xs text-stone-800 outline-none focus:border-rose-500 focus:bg-white shadow-inner" placeholder="e.g. According to the Kinetic Molecular Theory, higher temperature increases particle kinetic speed. Faster gas particles collide with the inner rubber walls more frequently and with greater force, increasing internal pressure until the flexible balloon expands."></textarea>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span id="cerFeedback" class="text-xs text-stone-500">Complete all 3 sections to evaluate your scientific argument.</span>
+              <button onclick="evaluateCER()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-bold text-xs shadow-md shadow-orange-500/25">
+                Submit & Self-Assess CER
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="help-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-orange-200 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-orange-100 pb-3">
+        <h3 class="text-lg font-bold brand-font text-stone-900 flex items-center gap-2">
+          <i class="fa-solid fa-book-open-reader text-orange-500"></i> STEMscopes 15 Lab Guide
+        </h3>
+        <button onclick="closeModal('help-modal')" class="text-stone-400 hover:text-stone-700 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="text-xs text-stone-600 space-y-3 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+        <p><strong>Standard 7.PS1.3:</strong> In this laboratory module, you investigate how heating and cooling change the motion, spacing, and state of matter.</p>
+        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 space-y-1">
+          <div class="font-bold text-orange-900">Quick Cheatsheet:</div>
+          <p>&bull; <strong>Solid:</strong> Tightly packed, vibrate in fixed positions. Definite shape & volume.</p>
+          <p>&bull; <strong>Liquid:</strong> Close together, slide past each other. Definite volume, no definite shape.</p>
+          <p>&bull; <strong>Gas:</strong> Widely separated, fast random collisions. No definite shape or volume.</p>
+        </div>
+        <p><strong>Mini-Game Tip:</strong> In <em>Phase Rush</em>, watch your target state! Tap Cryo-Cool or Heat Burst to dial in the correct kinetic temperature before locking in!</p>
+      </div>
+      <div class="text-right pt-2 border-t border-orange-100">
+        <button onclick="closeModal('help-modal')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-xs shadow-sm">
+          Got It, Let's Explore!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       AUDIO SYNTHESIZER (Tone.js)
+       ========================================================================= */
+    let audioEnabled = true;
+    let synth = null;
+
+    function initAudio() {
+      if (!synth && window.Tone) {
+        try {
+          synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.005, decay: 0.1, sustain: 0.05, release: 0.1 }
+          }).toDestination();
+          synth.volume.value = -12;
+        } catch (e) {
+          console.log("Audio init deferred");
+        }
+      }
+    }
+
+    function playTone(type) {
+      if (!audioEnabled) return;
+      initAudio();
+      if (!synth) return;
+      try {
+        const now = Tone.now();
+        if (type === 'heat') {
+          synth.triggerAttackRelease(["C4", "E4", "G4"], "16n", now);
+        } else if (type === 'cool') {
+          synth.triggerAttackRelease(["G4", "E4", "C4"], "16n", now);
+        } else if (type === 'win') {
+          synth.triggerAttackRelease(["C4", "G4", "C5"], "8n", now);
+        } else if (type === 'wrong') {
+          synth.triggerAttackRelease(["F3", "B2"], "16n", now);
+        } else if (type === 'click') {
+          synth.triggerAttackRelease("A4", "32n", now);
+        }
+      } catch (err) {}
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (audioEnabled) {
+        icon.className = "fa-solid fa-volume-high";
+      } else {
+        icon.className = "fa-solid fa-volume-xmark text-rose-400";
+      }
+    }
+
+    /* =========================================================================
+       SIMULATOR PHYSICS ENGINE (Canvas)
+       ========================================================================= */
+    const simCanvas = document.getElementById('simCanvas');
+    const simCtx = simCanvas.getContext('2d');
+
+    let particles = [];
+    const NUM_PARTICLES = 64;
+    let simTemp = 260; // Kelvin (starts in Solid ice)
+    let simPressure = 1.0; // atm
+    let showVectors = false;
+    let substance = 'water'; // 'water' or 'noble'
+    let animFrameId = null;
+
+    class Particle {
+      constructor(x, y, targetX, targetY) {
+        this.x = x;
+        this.y = y;
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.radius = 7; // Size stays CONSTANT (Misconception Buster!)
+        this.color = '#38bdf8';
+        this.hydrogenColor = '#ffffff';
+      }
+
+      update(state, width, height, effectiveFloor, pistonY) {
+        // Temperature governs kinetic speed factor
+        const speedScale = Math.sqrt(simTemp / 150);
+
+        if (state === 'solid') {
+          // Vibrates around fixed lattice position
+          const amp = Math.min(6, (simTemp / 273) * 3);
+          this.x = this.targetX + (Math.random() - 0.5) * amp;
+          this.y = this.targetY + (Math.random() - 0.5) * amp;
+        } else if (state === 'liquid') {
+          // Molecules stay close to the floor, sliding past each other
+          this.x += this.vx * speedScale * 0.7;
+          this.y += this.vy * speedScale * 0.7;
+
+          // Gravity effect pulls to liquid pool
+          this.vy += 0.12;
+
+          // Boundaries inside pool
+          const leftBound = 40;
+          const rightBound = width - 40;
+          const topLiquidBound = effectiveFloor - 110;
+
+          if (this.x - this.radius < leftBound) { this.x = leftBound + this.radius; this.vx *= -0.8; }
+          if (this.x + this.radius > rightBound) { this.x = rightBound - this.radius; this.vx *= -0.8; }
+          if (this.y + this.radius > effectiveFloor) { this.y = effectiveFloor - this.radius; this.vy *= -0.4; }
+          if (this.y - this.radius < topLiquidBound) { this.y = topLiquidBound + this.radius; this.vy += 0.2; }
+
+          // Molecular cohesion attraction
+          this.vx += (Math.random() - 0.5) * 0.3;
+        } else {
+          // Gas or Plasma: Fills whole available volume under piston
+          this.x += this.vx * speedScale * 1.5;
+          this.y += this.vy * speedScale * 1.5;
+
+          const leftBound = 40;
+          const rightBound = width - 40;
+          const topBound = pistonY + 10;
+          const bottomBound = effectiveFloor;
+
+          if (this.x - this.radius < leftBound) { this.x = leftBound + this.radius; this.vx *= -1; }
+          if (this.x + this.radius > rightBound) { this.x = rightBound - this.radius; this.vx *= -1; }
+          if (this.y - this.radius < topBound) { this.y = topBound + this.radius; this.vy *= -1; }
+          if (this.y + this.radius > bottomBound) { this.y = bottomBound - this.radius; this.vy *= -1; }
+        }
+      }
+
+      draw(ctx, state) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        if (substance === 'water') {
+          // Oxygen center atom (warm energetic ember palette)
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = state === 'plasma' ? '#fbbf24' : (state === 'solid' ? '#f59e0b' : (state === 'liquid' ? '#f97316' : '#e11d48'));
+          ctx.fill();
+          ctx.strokeStyle = '#fff7ed';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // 2 Hydrogen ears (Mickey Mouse H2O molecule structure!)
+          const hRadius = this.radius * 0.55;
+          ctx.beginPath();
+          ctx.arc(-this.radius * 0.7, -this.radius * 0.6, hRadius, 0, Math.PI * 2);
+          ctx.arc(this.radius * 0.7, -this.radius * 0.6, hRadius, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffedd5';
+          ctx.fill();
+        } else {
+          // Neon / Noble gas single sphere
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = state === 'plasma' ? '#fbbf24' : (state === 'solid' ? '#f59e0b' : (state === 'liquid' ? '#f97316' : '#fb7185'));
+          ctx.fill();
+          ctx.strokeStyle = '#fff7ed';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+
+        // Draw Velocity Vectors
+        if (showVectors && (state === 'liquid' || state === 'gas' || state === 'plasma')) {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(this.vx * 8, this.vy * 8);
+          ctx.strokeStyle = '#fde047';
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    function initSimulator() {
+      // Set canvas resolution
+      const rect = simCanvas.getBoundingClientRect();
+      simCanvas.width = rect.width * window.devicePixelRatio || 640;
+      simCanvas.height = rect.height * window.devicePixelRatio || 380;
+
+      particles = [];
+      const cols = 8;
+      const rows = 8;
+      const startX = (simCanvas.width / 2) - (cols * 20) / 2;
+      const startY = simCanvas.height - 130;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const tx = startX + c * 22;
+          const ty = startY + r * 14;
+          particles.push(new Particle(tx, ty, tx, ty));
+        }
+      }
+    }
+
+    function getCurrentPhase() {
+      if (simTemp >= 550) return 'plasma';
+      // Boiling point shifts with pressure
+      const effectiveBoiling = 373 - ((1.0 - simPressure) * 40);
+      const effectiveMelting = 273 - ((simPressure - 1.0) * 10);
+
+      if (simTemp < effectiveMelting) return 'solid';
+      if (simTemp < effectiveBoiling) return 'liquid';
+      return 'gas';
+    }
+
+    function renderSimulator() {
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      simCtx.clearRect(0, 0, w, h);
+
+      const state = getCurrentPhase();
+      const floorY = h - 25;
+
+      // Piston height depends on pressure
+      // Lower pressure = high volume (piston high), High pressure = low volume (piston low)
+      const maxPistonY = 40;
+      const minPistonY = h - 160;
+      const pistonY = maxPistonY + (simPressure - 0.2) * ((minPistonY - maxPistonY) / 2.8);
+
+      // Draw Chamber Cylinder Walls (Crisp bronze / warm terracotta on bright backdrop)
+      simCtx.save();
+      simCtx.strokeStyle = '#c2410c';
+      simCtx.lineWidth = 5;
+      simCtx.strokeRect(30, 20, w - 60, floorY - 15);
+
+      // Draw Movable Top Piston Head
+      simCtx.fillStyle = '#ea580c';
+      simCtx.fillRect(33, pistonY - 16, w - 66, 16);
+      simCtx.fillStyle = '#fb923c';
+      simCtx.fillRect(w / 2 - 12, 10, 24, pistonY - 20);
+
+      // Piston Label
+      simCtx.font = "bold 11px Inter, sans-serif";
+      simCtx.fillStyle = "#ffffff";
+      simCtx.fillText(`PISTON PRESSURE: ${simPressure.toFixed(2)} atm`, 45, pistonY - 5);
+
+      // Liquid Container Outline when liquid
+      if (state === 'liquid') {
+        simCtx.fillStyle = 'rgba(249, 115, 22, 0.14)';
+        simCtx.fillRect(35, floorY - 125, w - 70, 125);
+      }
+
+      // Update & Draw Particles
+      particles.forEach(p => {
+        p.update(state, w, h, floorY, pistonY);
+        p.draw(simCtx, state);
+      });
+
+      simCtx.restore();
+
+      // Update HUD and Summary Text
+      updateHud(state);
+
+      animFrameId = requestAnimationFrame(renderSimulator);
+    }
+
+    function updateHud(state) {
+      const hudState = document.getElementById('hudState');
+      const hudKE = document.getElementById('hudKE');
+      const hudPressureVal = document.getElementById('hudPressureVal');
+      const arrangement = document.getElementById('arrangementSummary');
+      const shape = document.getElementById('shapeSummary');
+      const volume = document.getElementById('volumeSummary');
+
+      hudPressureVal.textContent = `${simPressure.toFixed(2)} atm`;
+
+      if (state === 'solid') {
+        hudState.textContent = 'Solid (Ice Lattice)';
+        hudState.className = 'font-extrabold text-amber-700';
+        hudKE.textContent = 'Low (Vibrating in fixed spot)';
+        hudKE.className = 'font-extrabold text-amber-600';
+        arrangement.textContent = 'Tightly packed vibrating lattice';
+        shape.textContent = 'Definite Shape';
+        volume.textContent = 'Definite Volume';
+      } else if (state === 'liquid') {
+        hudState.textContent = 'Liquid (Flowing Water)';
+        hudState.className = 'font-extrabold text-orange-600';
+        hudKE.textContent = 'Medium (Free to flow & slide)';
+        hudKE.className = 'font-extrabold text-orange-500';
+        arrangement.textContent = 'Close together, sliding past each other';
+        shape.textContent = 'No Definite Shape (Takes container)';
+        volume.textContent = 'Definite Volume';
+      } else if (state === 'gas') {
+        hudState.textContent = 'Gas (Water Vapor)';
+        hudState.className = 'font-extrabold text-rose-600';
+        hudKE.textContent = 'High (Rapid, random collisions)';
+        hudKE.className = 'font-extrabold text-rose-500';
+        arrangement.textContent = 'Far apart, virtually zero attraction';
+        shape.textContent = 'No Definite Shape';
+        volume.textContent = 'No Definite Volume (Fills all space)';
+      } else {
+        hudState.textContent = 'Plasma (Ionized Matter)';
+        hudState.className = 'font-extrabold text-yellow-600';
+        hudKE.textContent = 'Extreme Kinetic Energy';
+        hudKE.className = 'font-extrabold text-yellow-500';
+        arrangement.textContent = 'Charged ions and free electrons';
+        shape.textContent = 'No Definite Shape';
+        volume.textContent = 'No Definite Volume';
+      }
+    }
+
+    /* Slider Event Listeners */
+    const tempSlider = document.getElementById('tempSlider');
+    const tempDisplay = document.getElementById('tempDisplay');
+    const pressureSlider = document.getElementById('pressureSlider');
+    const pressureDisplay = document.getElementById('pressureDisplay');
+
+    tempSlider.addEventListener('input', (e) => {
+      simTemp = parseFloat(e.target.value);
+      const cel = Math.round(simTemp - 273.15);
+      tempDisplay.textContent = `${Math.round(simTemp)} K (${cel}°C)`;
+      playTone('click');
+    });
+
+    pressureSlider.addEventListener('input', (e) => {
+      simPressure = parseFloat(e.target.value);
+      pressureDisplay.textContent = `${simPressure.toFixed(2)} atm`;
+      playTone('click');
+    });
+
+    function applyThermalBurst(delta) {
+      simTemp = Math.max(50, Math.min(650, simTemp + delta));
+      tempSlider.value = simTemp;
+      const cel = Math.round(simTemp - 273.15);
+      tempDisplay.textContent = `${Math.round(simTemp)} K (${cel}°C)`;
+
+      if (delta > 0) {
+        flashGlow('burnerGlow');
+        playTone('heat');
+      } else {
+        flashGlow('freezerGlow');
+        playTone('cool');
+      }
+    }
+
+    function flashGlow(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.opacity = '1';
+        setTimeout(() => { el.style.opacity = '0'; }, 400);
+      }
+    }
+
+    function setDirectPhase(phase) {
+      if (phase === 'solid') {
+        simTemp = 200;
+        simPressure = 1.0;
+        playTone('cool');
+      } else if (phase === 'liquid') {
+        simTemp = 310;
+        simPressure = 1.0;
+        playTone('heat');
+      } else if (phase === 'gas') {
+        simTemp = 420;
+        simPressure = 1.0;
+        playTone('heat');
+      } else if (phase === 'plasma') {
+        simTemp = 600;
+        simPressure = 0.5;
+        playTone('heat');
+      }
+      syncInputs();
+    }
+
+    function triggerPhaseChange(action) {
+      if (action === 'melting') {
+        simTemp = 300;
+        playTone('heat');
+      } else if (action === 'freezing') {
+        simTemp = 210;
+        playTone('cool');
+      } else if (action === 'vaporization') {
+        simTemp = 410;
+        playTone('heat');
+      } else if (action === 'condensation') {
+        simTemp = 310;
+        playTone('cool');
+      } else if (action === 'sublimation') {
+        simTemp = 430;
+        simPressure = 0.3; // Low pressure causes sublimation
+        playTone('heat');
+      } else if (action === 'deposition') {
+        simTemp = 180;
+        simPressure = 0.3;
+        playTone('cool');
+      }
+      syncInputs();
+    }
+
+    function syncInputs() {
+      tempSlider.value = simTemp;
+      pressureSlider.value = simPressure;
+      const cel = Math.round(simTemp - 273.15);
+      tempDisplay.textContent = `${Math.round(simTemp)} K (${cel}°C)`;
+      pressureDisplay.textContent = `${simPressure.toFixed(2)} atm`;
+    }
+
+    function toggleVectors() {
+      showVectors = !showVectors;
+      const btn = document.getElementById('vectorBtn');
+      btn.innerHTML = showVectors 
+        ? '<i class="fa-solid fa-arrow-trend-up text-amber-400"></i> Velocity Vectors: ON'
+        : '<i class="fa-solid fa-arrow-trend-up"></i> Velocity Vectors: OFF';
+      playTone('click');
+    }
+
+    function setSubstance(type) {
+      substance = type;
+      document.getElementById('sub-water').className = type === 'water' 
+        ? 'p-2 rounded-lg border border-orange-400 bg-orange-500 text-white font-bold text-center shadow-sm transition'
+        : 'p-2 rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 text-center transition';
+      document.getElementById('sub-noble').className = type === 'noble' 
+        ? 'p-2 rounded-lg border border-orange-400 bg-orange-500 text-white font-bold text-center shadow-sm transition'
+        : 'p-2 rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-stone-900 text-center transition';
+      playTone('click');
+    }
+
+    function resetSimulator() {
+      simTemp = 260;
+      simPressure = 1.0;
+      showVectors = false;
+      substance = 'water';
+      syncInputs();
+      initSimulator();
+      playTone('click');
+    }
+
+    /* =========================================================================
+       PHASE DIAGRAM INTERACTION ENGINE
+       ========================================================================= */
+    const phaseSvg = document.getElementById('phaseSvg');
+    const probeMarker = document.getElementById('probeMarker');
+    const diagramPhaseBadge = document.getElementById('diagramPhaseBadge');
+    const diagramTempVal = document.getElementById('diagramTempVal');
+    const diagramPressVal = document.getElementById('diagramPressVal');
+    const diagramExplanation = document.getElementById('diagramExplanation');
+
+    phaseSvg.addEventListener('click', handlePhaseDiagramClick);
+
+    function handlePhaseDiagramClick(e) {
+      const pt = phaseSvg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const cursor = pt.matrixTransform(phaseSvg.getScreenCTM().inverse());
+      
+      // Clamp bounds inside chart
+      const clampedX = Math.max(65, Math.min(640, cursor.x));
+      const clampedY = Math.max(55, Math.min(395, cursor.y));
+
+      updateDiagramProbe(clampedX, clampedY);
+      playTone('click');
+    }
+
+    function updateDiagramProbe(x, y) {
+      probeMarker.setAttribute('transform', `translate(${x}, ${y})`);
+
+      // Calculate approximate Temp & Pressure from pixels
+      // X: 60 -> 650 => 100K -> 650K
+      const tempK = Math.round(100 + ((x - 60) / (650 - 60)) * 550);
+      const tempC = Math.round(tempK - 273.15);
+      // Y: 400 (bottom) -> 50 (top) => 0.01 atm -> 3.0 atm
+      const pressAtm = Math.max(0.05, ((400 - y) / (400 - 50)) * 3.0).toFixed(2);
+
+      diagramTempVal.textContent = `${tempK} K (${tempC}°C)`;
+      diagramPressVal.textContent = `${pressAtm} atm`;
+
+      // Determine state by geometric zones
+      // Triple point is (320, 300)
+      // Solid/Liquid line: x approx 320 to 350
+      // Liquid/Gas curve: from 320,300 to 610,150
+      // Solid/Gas curve: 60,400 to 320,300
+
+      let state = 'Gas';
+      let explanation = "";
+
+      if (x < 320) {
+        // Left of triple point x
+        const curveY = 400 - ((x - 60) / (320 - 60)) * 100;
+        if (y < curveY) {
+          state = 'Solid';
+        } else {
+          state = 'Gas';
+        }
+      } else {
+        // Right of triple point
+        const solidLiqX = 320 + ((300 - y) / 250) * 30;
+        if (x < solidLiqX) {
+          state = 'Solid';
+        } else {
+          // Check liquid vs gas curve
+          const progress = (x - 320) / (610 - 320);
+          const liqGasY = 300 - Math.pow(progress, 0.7) * 150;
+          if (y < liqGasY) {
+            state = 'Liquid';
+          } else {
+            state = 'Gas';
+          }
+        }
+      }
+
+      if (state === 'Solid') {
+        diagramPhaseBadge.textContent = 'Solid (Ice)';
+        diagramPhaseBadge.className = 'px-2.5 py-1 text-xs font-extrabold rounded-lg bg-amber-500 text-white shadow-sm';
+        explanation = `At ${pressAtm} atm and ${tempK} K, intermolecular attraction locks molecules into fixed lattice positions. Particles vibrate in place with low kinetic energy.`;
+      } else if (state === 'Liquid') {
+        diagramPhaseBadge.textContent = 'Liquid (Water)';
+        diagramPhaseBadge.className = 'px-2.5 py-1 text-xs font-extrabold rounded-lg bg-orange-500 text-white shadow-sm';
+        explanation = `Molecules have absorbed enough thermal energy to overcome rigid bonds. They remain in close physical contact with definite volume, but freely slide past each other to assume container shape.`;
+      } else {
+        diagramPhaseBadge.textContent = 'Gas (Vapor)';
+        diagramPhaseBadge.className = 'px-2.5 py-1 text-xs font-extrabold rounded-lg bg-rose-500 text-white shadow-sm';
+        explanation = `High kinetic energy completely overcomes mutual attractive forces. Molecules move rapidly in random vectors, colliding with container boundaries to exert pressure.`;
+      }
+
+      diagramExplanation.textContent = explanation;
+    }
+
+    function setStandardConditions() {
+      // 1 atm is at y = 210, 298K is at x = 360
+      updateDiagramProbe(360, 210);
+      playTone('win');
+    }
+
+    function locatePoint(pt) {
+      if (pt === 'triple') {
+        updateDiagramProbe(320, 300);
+        diagramPhaseBadge.textContent = 'Triple Point (B)';
+        diagramExplanation.textContent = 'The Triple Point is the unique thermodynamic coordinate where all three states (solid ice, liquid water, and water vapor) coexist in thermodynamic equilibrium!';
+      } else if (pt === 'critical') {
+        updateDiagramProbe(610, 150);
+        diagramPhaseBadge.textContent = 'Critical Point (C)';
+        diagramExplanation.textContent = 'The Critical Point represents the temperature and pressure beyond which liquid and gas phases merge into a single supercritical fluid.';
+      }
+      playTone('win');
+    }
+
+    /* =========================================================================
+       MINI-GAME ENGINE: "PHASE RUSH: MOLECULAR COMMANDER"
+       ========================================================================= */
+    const gameCanvas = document.getElementById('gameCanvas');
+    const gCtx = gameCanvas.getContext('2d');
+
+    let gameActive = false;
+    let gameScore = 0;
+    let gameStreak = 0;
+    let gameTime = 15;
+    let gameTimerId = null;
+    let gameParticles = [];
+    let gameChamberTemp = 200; // starts cold
+    let currentTarget = null;
+
+    const TARGET_MISSIONS = [
+      {
+        state: 'SOLID',
+        label: 'SOLID: FREEZE LATTICE',
+        hint: 'Lower temperature below 273K to lock particles into vibrating position!',
+        valid: (t) => t < 273
+      },
+      {
+        state: 'LIQUID',
+        label: 'LIQUID: FLUID FLOW',
+        hint: 'Keep temperature between 273K and 373K so molecules slide past each other!',
+        valid: (t) => t >= 273 && t <= 373
+      },
+      {
+        state: 'GAS',
+        label: 'GAS: HIGH-SPEED VAPOR',
+        hint: 'Heat above 373K so high-velocity molecules scatter in all directions!',
+        valid: (t) => t > 373
+      }
+    ];
+
+    function initGameParticles() {
+      gameParticles = [];
+      for (let i = 0; i < 35; i++) {
+        gameParticles.push({
+          x: 40 + Math.random() * (gameCanvas.width - 80),
+          y: 60 + Math.random() * (gameCanvas.height - 100),
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
+          radius: 7
+        });
+      }
+    }
+
+    function startGame() {
+      initAudio();
+      document.getElementById('gameOverlay').classList.add('hidden');
+      gameActive = true;
+      gameScore = 0;
+      gameStreak = 0;
+      gameChamberTemp = 240;
+      document.getElementById('gameScore').textContent = '0';
+      document.getElementById('gameStreak').textContent = '0x';
+      initGameParticles();
+      pickNextMission();
+      startTimer();
+      renderGameLoop();
+      playTone('win');
+    }
+
+    function startTimer() {
+      clearInterval(gameTimerId);
+      gameTime = 15;
+      document.getElementById('gameTimer').textContent = `${gameTime}s`;
+      gameTimerId = setInterval(() => {
+        if (!gameActive) return;
+        gameTime--;
+        document.getElementById('gameTimer').textContent = `${gameTime}s`;
+        if (gameTime <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function pickNextMission() {
+      currentTarget = TARGET_MISSIONS[Math.floor(Math.random() * TARGET_MISSIONS.length)];
+      document.getElementById('gameTargetState').textContent = currentTarget.label;
+      document.getElementById('gameHint').textContent = currentTarget.hint;
+      gameTime = 15;
+    }
+
+    function adjustGameTemp(delta) {
+      if (!gameActive) return;
+      gameChamberTemp = Math.max(100, Math.min(500, gameChamberTemp + delta));
+      document.getElementById('gameTempIndicator').textContent = `${gameChamberTemp} K`;
+      if (delta > 0) playTone('heat');
+      else playTone('cool');
+    }
+
+    function submitGameState() {
+      if (!gameActive) return;
+      if (currentTarget.valid(gameChamberTemp)) {
+        // Correct!
+        gameStreak++;
+        const points = 100 * gameStreak;
+        gameScore += points;
+        document.getElementById('gameScore').textContent = gameScore;
+        document.getElementById('gameStreak').textContent = `${gameStreak}x`;
+        playTone('win');
+        pickNextMission();
+      } else {
+        // Incorrect
+        gameStreak = 0;
+        document.getElementById('gameStreak').textContent = '0x';
+        playTone('wrong');
+      }
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(gameTimerId);
+      document.getElementById('gameOverlay').classList.remove('hidden');
+      document.getElementById('overlayTitle').textContent = 'Mission Complete!';
+      document.getElementById('overlayDesc').innerHTML = `Super job! You demonstrated strong mastery of particle motion & temperature.<br><strong class="text-amber-400 text-lg">Final Score: ${gameScore}</strong>`;
+      document.getElementById('startBtn').innerHTML = '<i class="fa-solid fa-rotate-left mr-2"></i> Play Again';
+      playTone('win');
+    }
+
+    function renderGameLoop() {
+      if (!gameActive) return;
+
+      const w = gameCanvas.width;
+      const h = gameCanvas.height;
+      gCtx.clearRect(0, 0, w, h);
+
+      // Temperature-driven background ambient
+      const speed = Math.sqrt(gameChamberTemp / 150);
+
+      // Draw Chamber Walls
+      gCtx.strokeStyle = '#c2410c';
+      gCtx.lineWidth = 4;
+      gCtx.strokeRect(20, 20, w - 40, h - 40);
+
+      // Update & Render Game Atoms
+      gameParticles.forEach((p, idx) => {
+        if (gameChamberTemp < 273) {
+          // Solid vibrate
+          p.x += (Math.random() - 0.5) * 2;
+          p.y += (Math.random() - 0.5) * 2;
+        } else if (gameChamberTemp <= 373) {
+          // Liquid flow & gravity
+          p.x += p.vx * speed * 0.7;
+          p.y += p.vy * speed * 0.7;
+          p.vy += 0.1;
+        } else {
+          // Gas scatter
+          p.x += p.vx * speed * 1.4;
+          p.y += p.vy * speed * 1.4;
+        }
+
+        // Keep inside bounds
+        if (p.x < 30) { p.x = 30; p.vx *= -1; }
+        if (p.x > w - 30) { p.x = w - 30; p.vx *= -1; }
+        if (p.y < 30) { p.y = 30; p.vy *= -1; }
+        if (p.y > h - 30) { p.y = h - 30; p.vy *= -1; }
+
+        gCtx.beginPath();
+        gCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        gCtx.fillStyle = gameChamberTemp < 273 ? '#f59e0b' : (gameChamberTemp <= 373 ? '#f97316' : '#f43f5e');
+        gCtx.fill();
+        gCtx.strokeStyle = '#fff7ed';
+        gCtx.lineWidth = 1;
+        gCtx.stroke();
+      });
+
+      requestAnimationFrame(renderGameLoop);
+    }
+
+    /* =========================================================================
+       CONCEPT DEFINITION MAP VERIFICATION
+       ========================================================================= */
+    function validateConceptMap() {
+      playTone('win');
+      alertBox('Concept Map Checked!', 'Excellent synthesis of the Three States of Matter! You properly linked definitions, structural details, and real-world examples.');
+    }
+
+    /* =========================================================================
+       DOK 3 MULTIPLE CHOICE QUIZ ENGINE (Curated from unit plan & bank)
+       ========================================================================= */
+    const quizData = [
+      {
+        q: "Which best explains why ice maintains its shape while liquid water does not?",
+        options: [
+          "Ice has significantly more mass than liquid water",
+          "Water molecules move faster than ice molecules",
+          "Ice molecules vibrate in fixed positions while water molecules slide past each other",
+          "Liquid water contains fundamentally different chemical atoms"
+        ],
+        answer: 2,
+        explain: "In a solid (ice), strong mutual attractions lock molecules into fixed positions where they only vibrate. In liquid water, molecules possess enough energy to slide freely past one another."
+      },
+      {
+        q: "When water boils and turns into steam, what happens to the motion and spacing of its particles?",
+        options: [
+          "Particles slow down and shrink in physical diameter",
+          "Particles move farther apart and move much faster",
+          "Particles cease motion and break into separate subatomic particles",
+          "Particles clump tightly together due to extreme heat"
+        ],
+        answer: 1,
+        explain: "Boiling adds thermal energy, giving particles sufficient kinetic velocity to break completely free from mutual attraction, spreading far apart."
+      },
+      {
+        q: "Why do gases completely fill the shape and volume of any container they are placed in?",
+        options: [
+          "Gas particles are tightly bonded to the container sides",
+          "Gas particles move freely with minimal mutual attraction and spread out completely",
+          "Gas particles have greater mass than liquids",
+          "Gases have zero kinetic energy"
+        ],
+        answer: 1,
+        explain: "Because there is basically no attraction among gas molecules, they expand and move randomly until they fill the entire volume."
+      },
+      {
+        q: "What is the common scientific misconception about atoms during phase transitions?",
+        options: [
+          "Atoms move faster when heated",
+          "Atoms shrink, grow, or disappear when changing states",
+          "Ice can turn into water vapor directly",
+          "Pressure affects boiling point"
+        ],
+        answer: 1,
+        explain: "Misconception Buster: Individual atoms/molecules never shrink or swell! Only their kinetic speed and physical spacing change."
+      },
+      {
+        q: "Why does evaporation cool down your skin when you sweat after exercising?",
+        options: [
+          "Water molecules freeze into microscopic ice on your skin",
+          "The fastest, highest-energy liquid molecules escape into gas, removing thermal energy from skin",
+          "Thermal energy is trapped inside your body by sweat",
+          "Skin pores shrink and block atmospheric pressure"
+        ],
+        answer: 1,
+        explain: "Evaporative cooling works because only molecules with high kinetic energy can break free into gas, lowering the average thermal energy of the remaining moisture."
+      },
+      {
+        q: "Which phase change requires the REMOVAL of thermal energy?",
+        options: [
+          "Melting",
+          "Evaporation",
+          "Freezing",
+          "Sublimation"
+        ],
+        answer: 2,
+        explain: "Freezing and condensation release (remove) thermal energy, causing molecules to slow down and bond more tightly."
+      },
+      {
+        q: "Why can gases be compressed into smaller volumes while solids cannot?",
+        options: [
+          "Solids have softer atoms",
+          "Gases have large empty spaces between particles that can be squeezed together",
+          "Solids have zero atoms inside them",
+          "Gases have less weight in Earth's gravity"
+        ],
+        answer: 1,
+        explain: "In gases, particles are widely separated. External pressure readily forces them closer together into smaller volumes."
+      },
+      {
+        q: "A sealed helium balloon left in a hot car expands. How does Kinetic Molecular Theory explain this?",
+        options: [
+          "Air molecules gain thermal energy, move faster, and strike inner rubber walls with greater force",
+          "The rubber molecules melt and disappear",
+          "Atmospheric pressure outside increases by 500%",
+          "Helium molecules duplicate into more atoms"
+        ],
+        answer: 0,
+        explain: "Higher temperature means faster molecular motion. The energetic collisions against the balloon wall push it outward."
+      },
+      {
+        q: "Which best describes the phase change of Sublimation?",
+        options: [
+          "Solid directly transitioning to Gas without becoming a liquid",
+          "Gas cooling directly into a Solid",
+          "Liquid turning into a Gas at boiling point",
+          "Liquid freezing into a solid crystal"
+        ],
+        answer: 0,
+        explain: "Sublimation (like dry ice) occurs when particles gain enough energy to break directly from a fixed solid lattice into free gas molecules."
+      },
+      {
+        q: "On a phase diagram, what does the Triple Point (Point B) represent?",
+        options: [
+          "The point where matter changes into plasma",
+          "The specific temperature and pressure where solid, liquid, and gas phases coexist in equilibrium",
+          "The normal boiling point at 1 atmosphere",
+          "The maximum possible temperature in the universe"
+        ],
+        answer: 1,
+        explain: "The Triple Point is the unique thermodynamic coordinate where solid, liquid, and gas phases exist simultaneously."
+      }
+    ];
+
+    let currentQIndex = 0;
+    let userAnswers = {};
+
+    function renderQuestion() {
+      const q = quizData[currentQIndex];
+      const box = document.getElementById('quizQuestionBox');
+      document.getElementById('qCurrent').textContent = currentQIndex + 1;
+      document.getElementById('qTotal').textContent = quizData.length;
+
+      const hasAnswered = userAnswers[currentQIndex] !== undefined;
+
+      let html = `
+        <div class="space-y-4">
+          <div class="text-base font-bold text-stone-900 leading-relaxed">
+            <span class="text-orange-600 mr-2">Q${currentQIndex + 1}.</span> ${q.q}
+          </div>
+          <div class="space-y-2 pt-2">
+      `;
+
+      q.options.forEach((opt, idx) => {
+        let btnClass = "w-full p-3.5 rounded-xl border text-left text-xs font-medium transition flex items-center justify-between ";
+        if (!hasAnswered) {
+          btnClass += "bg-white border-orange-200 hover:border-orange-500 hover:bg-orange-50 text-stone-800 shadow-sm";
+        } else {
+          if (idx === q.answer) {
+            btnClass += "bg-amber-100 border-amber-500 text-amber-900 font-bold shadow-sm";
+          } else if (userAnswers[currentQIndex] === idx) {
+            btnClass += "bg-rose-100 border-rose-400 text-rose-900 font-bold shadow-sm";
+          } else {
+            btnClass += "bg-stone-50 border-stone-200 text-stone-400 opacity-60";
+          }
+        }
+
+        html += `
+          <button onclick="selectQuizAnswer(${idx})" ${hasAnswered ? 'disabled' : ''} class="${btnClass}">
+            <span><strong class="text-stone-500 mr-2">${String.fromCharCode(65 + idx)}.</strong> ${opt}</span>
+            ${hasAnswered && idx === q.answer ? '<i class="fa-solid fa-circle-check text-orange-600 text-base"></i>' : ''}
+            ${hasAnswered && userAnswers[currentQIndex] === idx && idx !== q.answer ? '<i class="fa-solid fa-circle-xmark text-rose-600 text-base"></i>' : ''}
+          </button>
+        `;
+      });
+
+      html += `</div>`;
+
+      if (hasAnswered) {
+        html += `
+          <div class="mt-4 p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-xs space-y-1">
+            <div class="font-bold text-orange-900 flex items-center gap-1.5">
+              <i class="fa-solid fa-lightbulb text-orange-500"></i> Scientific Explanation:
+            </div>
+            <p class="text-stone-700 leading-relaxed">${q.explain}</p>
+          </div>
+        `;
+      }
+
+      html += `</div>`;
+      box.innerHTML = html;
+
+      // Update Prev / Next buttons
+      document.getElementById('prevQBtn').disabled = currentQIndex === 0;
+      document.getElementById('nextQBtn').textContent = currentQIndex === quizData.length - 1 ? 'Finish Quiz' : 'Next Question';
+    }
+
+    function selectQuizAnswer(idx) {
+      userAnswers[currentQIndex] = idx;
+      if (idx === quizData[currentQIndex].answer) {
+        playTone('win');
+      } else {
+        playTone('wrong');
+      }
+      recalcQuizScore();
+      renderQuestion();
+    }
+
+    function recalcQuizScore() {
+      let score = 0;
+      Object.keys(userAnswers).forEach(key => {
+        if (userAnswers[key] === quizData[key].answer) score++;
+      });
+      document.getElementById('quizScoreText').textContent = score;
+    }
+
+    function prevQuestion() {
+      if (currentQIndex > 0) {
+        currentQIndex--;
+        renderQuestion();
+        playTone('click');
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQIndex < quizData.length - 1) {
+        currentQIndex++;
+        renderQuestion();
+        playTone('click');
+      } else {
+        alertBox('Assessment Complete!', `You scored ${document.getElementById('quizScoreText').textContent} out of 10! Review any flagged questions to solidify your Tennessee 7.PS1.3 mastery.`);
+      }
+    }
+
+    function setQuizSubTab(tab) {
+      if (tab === 'mc') {
+        document.getElementById('sub-panel-mc').classList.remove('hidden');
+        document.getElementById('sub-panel-cer').classList.add('hidden');
+        document.getElementById('btn-sub-mc').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm";
+        document.getElementById('btn-sub-cer').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 hover:text-orange-600";
+      } else {
+        document.getElementById('sub-panel-mc').classList.add('hidden');
+        document.getElementById('sub-panel-cer').classList.remove('hidden');
+        document.getElementById('btn-sub-cer').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm";
+        document.getElementById('btn-sub-mc').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 hover:text-orange-600";
+      }
+      playTone('click');
+    }
+
+    function evaluateCER() {
+      const claim = document.getElementById('cerClaim').value.trim();
+      const evidence = document.getElementById('cerEvidence').value.trim();
+      const reasoning = document.getElementById('cerReasoning').value.trim();
+
+      if (!claim || !evidence || !reasoning) {
+        alertBox('Incomplete CER', 'Please fill in all three fields (Claim, Evidence, and Reasoning) before submitting your argument.');
+        playTone('wrong');
+        return;
+      }
+
+      playTone('win');
+      document.getElementById('cerFeedback').innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Exemplary CER Argument!</span> High marks for connecting temperature increase to kinetic molecular wall collisions.`;
+      alertBox('CER Argument Evaluated!', 'Outstanding scientific argument! Your response properly addresses Tennessee Standard 7.PS1.3 by bridging thermal energy, particle velocity, and macroscopic container expansion.');
+    }
+
+    /* =========================================================================
+       TAB & MODAL SYSTEM (No alert() used)
+       ========================================================================= */
+    function switchTab(tabId) {
+      const tabs = ['sim', 'diagram', 'game', 'concept', 'quiz'];
+      tabs.forEach(t => {
+        document.getElementById(`section-${t}`).classList.add('hidden');
+        const b = document.getElementById(`tab-${t}`);
+        b.className = "tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all text-stone-700 hover:text-orange-600 hover:bg-white/80";
+      });
+
+      document.getElementById(`section-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25";
+
+      if (tabId === 'sim') {
+        setTimeout(initSimulator, 50);
+      }
+      playTone('click');
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      playTone('click');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+      playTone('click');
+    }
+
+    // Custom Modal message box replacing browser alert()
+    function alertBox(title, message) {
+      let modal = document.getElementById('customAlertBox');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'customAlertBox';
+        modal.className = "fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4";
+        modal.innerHTML = `
+          <div class="bg-white border border-orange-200 rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl">
+            <h4 id="alertTitle" class="text-base font-bold text-stone-900 brand-font"></h4>
+            <p id="alertMsg" class="text-xs text-stone-600 leading-relaxed font-medium"></p>
+            <div class="text-right pt-2">
+              <button onclick="document.getElementById('customAlertBox').classList.add('hidden')" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-xs shadow-sm">OK</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+      document.getElementById('alertTitle').textContent = title;
+      document.getElementById('alertMsg').textContent = message;
+      modal.classList.remove('hidden');
+    }
+
+    /* Window Load Initializer */
+    window.onload = function () {
+      initSimulator();
+      renderSimulator();
+      renderQuestion();
+      updateDiagramProbe(360, 210); // Standard conditions default
+    };
+
+    window.addEventListener('resize', () => {
+      initSimulator();
+    });
+  </script>
+</body>
+</html>
